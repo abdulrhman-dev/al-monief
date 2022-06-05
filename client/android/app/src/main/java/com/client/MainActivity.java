@@ -9,6 +9,8 @@ import com.facebook.react.ReactRootView;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
+import com.zoontek.rnbootsplash.RNBootSplash;
+
 public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -19,22 +21,9 @@ public class MainActivity extends ReactActivity {
     super.onCreate(null);
   }
 
-  /**
-   * Returns the name of the main component registered from JavaScript.
-   * This is used to schedule rendering of the component.
-   */
-  @Override
-  protected String getMainComponentName() {
-    return "main";
-  }
 
-  @Override
-  protected ReactActivityDelegate createReactActivityDelegate() {
-    return new ReactActivityDelegateWrapper(this,
-      new ReactActivityDelegate(this, getMainComponentName())
-    );
-  }
 
+ 
   /**
    * Align the back button behavior with Android S
    * where moving root activities to background instead of finishing activities.
@@ -54,4 +43,33 @@ public class MainActivity extends ReactActivity {
     // because it's doing more than {@link Activity#moveTaskToBack} in fact.
     super.invokeDefaultOnBackPressed();
   }
+
+  /**
+   * Returns the name of the main component registered from JavaScript.
+   * This is used to schedule rendering of the component.
+   */
+  @Override
+  protected String getMainComponentName() {
+    return "main";
+  }
+
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new MainActivityDelegate(this, getMainComponentName());
+  }
+  
+  public static class MainActivityDelegate extends ReactActivityDelegate {
+      public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+        super(activity, mainComponentName);
+      }
+    
+    @Override
+    protected void loadApp(String appKey) {
+      RNBootSplash.init(getPlainActivity()); // <- initialize the splash screen
+      super.loadApp(appKey);
+    }
+  }
+    
 }
+
+
