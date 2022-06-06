@@ -19,7 +19,7 @@
     "react-native": "0.68.2",
     "react-native-bootsplash": "^4.1.5",
     "react-native-web": "0.17.7",
-    "webpack-dev-server": "~3.11.0"
+    "webpack-dev-server": "^4.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

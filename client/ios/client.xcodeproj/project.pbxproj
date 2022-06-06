@@ -14,6 +14,15 @@
 		96905EF65AED1B983A6B3ABC /* libPods-client.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-client.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		71930334EBDD48FEB7B70A17 /* NotoKufiArabic-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1F097184F0684EA0AEA73000 /* NotoKufiArabic-Black.ttf */; };
+		1F5B592F5BFD40DABFBBB649 /* NotoKufiArabic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 866EBD0A4F944DF48D5A4092 /* NotoKufiArabic-Bold.ttf */; };
+		5963455818E64D04A1396EDB /* NotoKufiArabic-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D454C88EE87C478C8BC92893 /* NotoKufiArabic-ExtraBold.ttf */; };
+		F3D481D97BCF4D5987F28094 /* NotoKufiArabic-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A16685DBC73D4BF894E5F39C /* NotoKufiArabic-ExtraLight.ttf */; };
+		F7B2CFBCA60C4276AB96D5E1 /* NotoKufiArabic-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5154E60C04B74C548E381CC8 /* NotoKufiArabic-Light.ttf */; };
+		99CF71CE618C452F8CF55108 /* NotoKufiArabic-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1D4C848224C4A0FBA6AF6BE /* NotoKufiArabic-Medium.ttf */; };
+		91689A5312A04F5FB0CE68C3 /* NotoKufiArabic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72A807BA006346CCBEF24F74 /* NotoKufiArabic-Regular.ttf */; };
+		A6BDA25E7B6344F4BD0FF159 /* NotoKufiArabic-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D37711705084965A2CA0BFD /* NotoKufiArabic-SemiBold.ttf */; };
+		84C0C900AF9348CA82D0F41A /* NotoKufiArabic-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 322549B9DA314E56A31F0B89 /* NotoKufiArabic-Thin.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +40,15 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-client/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		1F097184F0684EA0AEA73000 /* NotoKufiArabic-Black.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Black.ttf"; path = "../assets/fonts/NotoKufiArabic-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		866EBD0A4F944DF48D5A4092 /* NotoKufiArabic-Bold.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Bold.ttf"; path = "../assets/fonts/NotoKufiArabic-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D454C88EE87C478C8BC92893 /* NotoKufiArabic-ExtraBold.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-ExtraBold.ttf"; path = "../assets/fonts/NotoKufiArabic-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A16685DBC73D4BF894E5F39C /* NotoKufiArabic-ExtraLight.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-ExtraLight.ttf"; path = "../assets/fonts/NotoKufiArabic-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5154E60C04B74C548E381CC8 /* NotoKufiArabic-Light.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Light.ttf"; path = "../assets/fonts/NotoKufiArabic-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B1D4C848224C4A0FBA6AF6BE /* NotoKufiArabic-Medium.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Medium.ttf"; path = "../assets/fonts/NotoKufiArabic-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		72A807BA006346CCBEF24F74 /* NotoKufiArabic-Regular.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Regular.ttf"; path = "../assets/fonts/NotoKufiArabic-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5D37711705084965A2CA0BFD /* NotoKufiArabic-SemiBold.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-SemiBold.ttf"; path = "../assets/fonts/NotoKufiArabic-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		322549B9DA314E56A31F0B89 /* NotoKufiArabic-Thin.ttf */ = {isa = PBXFileReference; name = "NotoKufiArabic-Thin.ttf"; path = "../assets/fonts/NotoKufiArabic-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +103,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
+				57E53E4EFDEB4B6D924764FC /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -132,6 +151,23 @@
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
+		};
+		57E53E4EFDEB4B6D924764FC /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				1F097184F0684EA0AEA73000 /* NotoKufiArabic-Black.ttf */,
+				866EBD0A4F944DF48D5A4092 /* NotoKufiArabic-Bold.ttf */,
+				D454C88EE87C478C8BC92893 /* NotoKufiArabic-ExtraBold.ttf */,
+				A16685DBC73D4BF894E5F39C /* NotoKufiArabic-ExtraLight.ttf */,
+				5154E60C04B74C548E381CC8 /* NotoKufiArabic-Light.ttf */,
+				B1D4C848224C4A0FBA6AF6BE /* NotoKufiArabic-Medium.ttf */,
+				72A807BA006346CCBEF24F74 /* NotoKufiArabic-Regular.ttf */,
+				5D37711705084965A2CA0BFD /* NotoKufiArabic-SemiBold.ttf */,
+				322549B9DA314E56A31F0B89 /* NotoKufiArabic-Thin.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -196,6 +232,15 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+				71930334EBDD48FEB7B70A17 /* NotoKufiArabic-Black.ttf in Resources */,
+				1F5B592F5BFD40DABFBBB649 /* NotoKufiArabic-Bold.ttf in Resources */,
+				5963455818E64D04A1396EDB /* NotoKufiArabic-ExtraBold.ttf in Resources */,
+				F3D481D97BCF4D5987F28094 /* NotoKufiArabic-ExtraLight.ttf in Resources */,
+				F7B2CFBCA60C4276AB96D5E1 /* NotoKufiArabic-Light.ttf in Resources */,
+				99CF71CE618C452F8CF55108 /* NotoKufiArabic-Medium.ttf in Resources */,
+				91689A5312A04F5FB0CE68C3 /* NotoKufiArabic-Regular.ttf in Resources */,
+				A6BDA25E7B6344F4BD0FF159 /* NotoKufiArabic-SemiBold.ttf in Resources */,
+				84C0C900AF9348CA82D0F41A /* NotoKufiArabic-Thin.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
