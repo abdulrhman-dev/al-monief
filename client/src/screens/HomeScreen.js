@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import {
     View,
     Text,
@@ -9,9 +9,19 @@ import MainLogo from "../../assets/logo.svg"
 // Provider
 import { useUser } from "../../UserProvider"
 import Avatar from "../Components/Avatar"
+// Socket 
+import { socket } from "../Utilities/SocketConnection"
+
 
 export default HomeScreen = () => {
     const user = useUser()
+
+    useEffect(() => {
+        if (user.name) {
+            socket.emit("configure-user", user)
+        }
+    }, [])
+
     return (
         <View style={HomeScreenStyle.screenView}>
             <MainLogo

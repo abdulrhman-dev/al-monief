@@ -14,11 +14,13 @@ import DicebearAvatar from "../Components/DicebearAvatar"
 import "react-native-get-random-values"
 import { v4 as uuidv4 } from "uuid";
 
+const uniqueNumber = String(Math.floor((Math.random() * 5000)))
 
 export default CreateUserScreen = () => {
-    const [username, changeUsername] = useState()
+    const [username, changeUsername] = useState("")
     const [avatar, storeAvatar] = useState()
     const storeUser = useStoreUser()
+
 
     function handleSubmit() {
         if (!username) return;
@@ -38,7 +40,7 @@ export default CreateUserScreen = () => {
             <View style={CreateUserStyle.body}>
                 <View style={CreateUserStyle.secionView}>
                     <DicebearAvatar
-                        seed={username}
+                        seed={uniqueNumber + username}
                         storeXML={xml => storeAvatar(xml)}
                     />
                 </View>

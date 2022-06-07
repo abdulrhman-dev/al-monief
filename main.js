@@ -12,6 +12,11 @@ const io = require("socket.io")(httpServer, {
 
 io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
+
+    socket.on("configure-user", user => {
+        socket.user = user
+        console.log(`Saved user for socket: ${socket.id}.`)
+    })
 })
 
 
