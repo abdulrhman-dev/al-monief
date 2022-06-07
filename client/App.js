@@ -5,7 +5,10 @@ import RNBootSplash from "react-native-bootsplash";
 // Fonts
 import { useFonts } from "expo-font"
 import ScreenNavigator from './src/Navigator/ScreenNavigator';
-import { UserProvider } from './UserProvider';
+// Providers
+import UserProvider from './UserProvider';
+import RoomProvider from './RoomProvider';
+
 
 
 export default function App() {
@@ -25,10 +28,12 @@ export default function App() {
 
   return (
     <UserProvider>
-      <View style={styles.container}>
-        <StatusBar style="auto" />
-        <ScreenNavigator />
-      </View>
+      <RoomProvider>
+        <View style={styles.container}>
+          <StatusBar style="auto" />
+          <ScreenNavigator />
+        </View>
+      </RoomProvider>
     </UserProvider>
   );
 }

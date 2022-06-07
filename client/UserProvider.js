@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const UserContext = createContext()
+const UserContext = createContext({})
 const StoreUserContext = createContext()
 
 
@@ -15,8 +15,8 @@ export const useStoreUser = () => {
     return useContext(StoreUserContext)
 }
 
-export const UserProvider = (props) => {
-    const [user, setUser] = useState()
+export default UserProvider = (props) => {
+    const [user, setUser] = useState({ loading: true })
 
     useEffect(() => {
         getUser(setUser)
@@ -38,8 +38,12 @@ async function getUser(setUser) {
         // ? Useful for dev
         // await AsyncStorage.removeItem("user")
         setUser({ loading: true })
+
         const user = await AsyncStorage.getItem("user")
-        setUser(JSON.parse(user))
+
+        if (user !== undefined) {
+            setUser(JSON.parse(user))
+        }
     } catch (err) {
         console.log(err)
     }

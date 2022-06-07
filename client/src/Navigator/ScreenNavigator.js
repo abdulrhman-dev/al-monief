@@ -3,9 +3,10 @@ import React from "react"
 // React Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// Screen 
+// Screen s
 import HomeScreen from "../screens/HomeScreen";
 import CreateUserScreen from "../screens/CreateUserScreen";
+import WaitingScreen from "../screens/WaitingScreen";
 // Context Provider
 import { useUser } from "../../UserProvider"
 
@@ -14,8 +15,11 @@ const Stack = createNativeStackNavigator();
 
 const ScreenNavigator = () => {
     const user = useUser()
-    if (!user || user.loading) return <></>
 
+
+    if (user.loading) {
+        return <></>
+    }
 
     return (
         <NavigationContainer>
@@ -34,6 +38,7 @@ const UserFound = () => (
         }}
     >
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="WaitingScreen" component={WaitingScreen} />
     </Stack.Navigator>
 )
 
@@ -45,6 +50,7 @@ const UserMissing = () => (
         }}
     >
         <Stack.Screen name="CreateUser" component={CreateUserScreen} />
+
     </Stack.Navigator>
 )
 

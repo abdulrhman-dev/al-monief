@@ -7,21 +7,30 @@ import {
 // Components
 import MainLogo from "../../assets/logo.svg"
 import Button from "../Components/PrimaryButton"
+import Avatar from "../Components/Avatar"
 // Provider
 import { useUser } from "../../UserProvider"
-import Avatar from "../Components/Avatar"
+import { useSetRoom } from "../../RoomProvider"
 // Socket 
 import { socket } from "../Utilities/SocketConnection"
 
 
-export default HomeScreen = () => {
+export default HomeScreen = ({ navigation }) => {
     const user = useUser()
+    const setRoomData = useSetRoom()
 
     useEffect(() => {
         if (user.name) {
             socket.emit("configure-user", user)
         }
     }, [])
+
+    function createRomm() {
+        socket.emit("generate-room", id => {
+            setRoomData({ id })
+            navigation.navigate("WaitingScreen")
+        })
+    }
 
     return (
         <View style={HomeScreenStyles.screenView}>
@@ -38,7 +47,7 @@ export default HomeScreen = () => {
                     <Text style={HomeScreenStyles.username}>{user.name}</Text>
                 </View>
                 <View style={HomeScreenStyles.actionSection}>
-                    <Button title={"أنشاء غرفة جديدة"} />
+                    <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} />
                     <Button title={"الدخول إلى غرفة "} />
                 </View>
             </View>
