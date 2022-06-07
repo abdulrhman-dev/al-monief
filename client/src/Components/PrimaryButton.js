@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import {
     Text,
     Pressable,
@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
         height: 45,
         borderRadius: 5,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        marginTop: 10
     },
     text: {
         fontFamily: "NotoKufiArabic-Bold",

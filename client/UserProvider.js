@@ -37,6 +37,7 @@ async function getUser(setUser) {
         // ? Resets User Every time app loads
         // ? Useful for dev
         // await AsyncStorage.removeItem("user")
+        setUser({ loading: true })
         const user = await AsyncStorage.getItem("user")
         setUser(JSON.parse(user))
     } catch (err) {

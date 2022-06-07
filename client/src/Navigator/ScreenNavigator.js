@@ -14,10 +14,13 @@ const Stack = createNativeStackNavigator();
 
 const ScreenNavigator = () => {
     const user = useUser()
+    if (!user || user.loading) return <></>
+
+
     return (
         <NavigationContainer>
             {
-                user ? <UserFound /> : <UserMissing />
+                user.name ? <UserFound /> : <UserMissing />
             }
         </NavigationContainer>
     )
