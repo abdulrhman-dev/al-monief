@@ -5,16 +5,24 @@ import {
     StyleSheet,
     Alert
 } from "react-native"
-// Socket
+// Utilities
 import { socket } from "../Utilities/SocketConnection"
+import { fillEmpty } from "../Utilities/lib"
+
 // Context
 import { useRoom } from "../../RoomProvider"
+
 // Components
 import QRCode from "react-native-qrcode-svg";
 import Button from "../Components/Button"
+import Avatar from "../Components/Avatar"
+
+let USER_LIMIT = 4;
 
 export default WaitingScreen = ({ navigation }) => {
     const room = useRoom()
+    // fill empty slots with null
+    const users = fillEmpty(room.users, USER_LIMIT)
 
     useEffect(() => {
         navigation.addListener('beforeRemove', (e) => {
@@ -43,22 +51,24 @@ export default WaitingScreen = ({ navigation }) => {
 
             <View style={WaitingScreenStyles.header}>
                 <Text style={WaitingScreenStyles.titleText}>أدع أصدقائك للدوخل!</Text>
-                <View style={WaitingScreenStyles.avatarsBar}>
-
-                </View>
             </View>
             <View style={WaitingScreenStyles.body}>
                 <View style={WaitingScreenStyles.mainbodyContent}>
                     <Text style={WaitingScreenStyles.text}>{room.id} :كود الغرفة</Text>
 
                     <QRCode
-                        backgroundColor="#f2f2f2"
                         value={room.id}
                         size={200}
                     />
                 </View>
 
+                <View style={WaitingScreenStyles.avatarsBar}>
+                    {users.map((user, index) => {
+                        if (user === null) return <UnAvailableUser key={index} />
 
+                        return <AvailableUser key={index} user={user} />
+                    })}
+                </View>
 
                 <View style={WaitingScreenStyles.button}>
                     <Button
@@ -74,8 +84,61 @@ export default WaitingScreen = ({ navigation }) => {
     )
 }
 
+
+function AvailableUser({ user }) {
+    return (
+        <View style={AvatarBarStyles.availableUser}>
+            <Avatar xml={user.avatarXML} width="70" height="70" />
+            <View style={AvatarBarStyles.textContainer}>
+                <Text
+                    numberOfLines={1}
+                    style={AvatarBarStyles.text}
+                >
+                    {user.name.split(" ")[0]}
+                </Text>
+            </View>
+        </View>
+    )
+}
+
+function UnAvailableUser() {
+    return (
+        <View style={AvatarBarStyles.unavailableUser} />
+    )
+}
+
+const AvatarBarStyles = StyleSheet.create({
+    availableUser: {
+        position: "relative"
+    },
+    unavailableUser: {
+        position: "relative",
+        width: 70,
+        height: 70,
+        backgroundColor: "#f0f0f0",
+        borderRadius: 50,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    textContainer: {
+        position: "absolute",
+        top: 75,
+        width: "100%",
+        height: 25,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    text: {
+        fontFamily: "NotoKufiArabic-Medium",
+        fontSize: 11.5
+    }
+})
+
+
+
 const WaitingScreenStyles = StyleSheet.create({
     container: {
+        backgroundColor: "white",
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
@@ -97,9 +160,6 @@ const WaitingScreenStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    avatarsBar: {
-
-    },
     body: {
         width: "100%",
         flex: 4.5,
@@ -107,12 +167,19 @@ const WaitingScreenStyles = StyleSheet.create({
         alignItems: "center"
     },
     mainbodyContent: {
-        flex: 4,
+        flex: 3.5,
         justifyContent: "center",
         alignItems: "center"
     },
+    avatarsBar: {
+        width: "90%",
+        flex: 1.5,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center"
+    },
     button: {
-        flex: 2,
+        flex: 1,
         justifyContent: "flex-end",
         marginBottom: 30
     }

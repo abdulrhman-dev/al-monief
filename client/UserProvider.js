@@ -41,8 +41,12 @@ async function getUser(setUser) {
 
         const user = await AsyncStorage.getItem("user")
 
-        if (user !== undefined) {
+        console.log(user !== null)
+
+        if (user !== null) {
             setUser(JSON.parse(user))
+        } else {
+            setUser({})
         }
     } catch (err) {
         console.log(err)

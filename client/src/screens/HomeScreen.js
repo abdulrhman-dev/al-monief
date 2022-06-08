@@ -11,8 +11,9 @@ import Avatar from "../Components/Avatar"
 // Provider
 import { useUser } from "../../UserProvider"
 import { useSetRoom } from "../../RoomProvider"
-// Socket 
+// Utilities 
 import { socket } from "../Utilities/SocketConnection"
+
 
 
 export default HomeScreen = ({ navigation }) => {
@@ -27,7 +28,7 @@ export default HomeScreen = ({ navigation }) => {
 
     function createRomm() {
         socket.emit("generate-room", id => {
-            setRoomData({ id })
+            setRoomData({ id, users: [user] })
             navigation.navigate("WaitingScreen")
         })
     }

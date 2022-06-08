@@ -12,7 +12,8 @@ import RoomProvider from './RoomProvider';
 
 
 export default function App() {
-  let [fontsLoaded, error] = useFonts({
+  let [fontsLoaded] = useFonts({
+    "NotoKufiArabic-Thin": require("./assets/fonts/NotoKufiArabic-Thin.ttf"),
     "NotoKufiArabic-Medium": require("./assets/fonts/NotoKufiArabic-Medium.ttf"),
     "NotoKufiArabic-Bold": require("./assets/fonts/NotoKufiArabic-Bold.ttf"),
     "NotoKufiArabic-ExtraBold": require("./assets/fonts/NotoKufiArabic-ExtraBold.ttf")
