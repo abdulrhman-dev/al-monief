@@ -6,7 +6,7 @@ import {
 } from "react-native"
 // Components
 import MainLogo from "../../assets/logo.svg"
-import Button from "../Components/PrimaryButton"
+import Button from "../Components/Button"
 import Avatar from "../Components/Avatar"
 // Provider
 import { useUser } from "../../UserProvider"

@@ -40,6 +40,8 @@ function generateAndMatch() {
 
     if (match) generateAndMatch()
 
+    rooms.push(id)
+
     return id
 }
 

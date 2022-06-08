@@ -11,7 +11,7 @@ import { socket } from "../Utilities/SocketConnection"
 import { useRoom } from "../../RoomProvider"
 // Components
 import QRCode from "react-native-qrcode-svg";
-import Button from "../Components/PrimaryButton"
+import Button from "../Components/Button"
 
 export default WaitingScreen = ({ navigation }) => {
     const room = useRoom()
@@ -63,7 +63,7 @@ export default WaitingScreen = ({ navigation }) => {
                 <View style={WaitingScreenStyles.button}>
                     <Button
                         title={"أبدا اللعبة"}
-                        disabled
+                        type="disabled"
                     />
                 </View>
 

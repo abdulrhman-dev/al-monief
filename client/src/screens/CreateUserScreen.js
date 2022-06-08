@@ -7,7 +7,7 @@ import {
 } from "react-native"
 import { useStoreUser } from "../../UserProvider"
 // Components
-import PrimaryButton from "../Components/PrimaryButton"
+import Button from "../Components/Button"
 import Input from "../Components/Input"
 import DicebearAvatar from "../Components/DicebearAvatar"
 // UUID
@@ -50,7 +50,7 @@ export default CreateUserScreen = () => {
                         value={username}
                         placeholder="أكتب أسمك"
                     />
-                    <PrimaryButton
+                    <Button
                         onPress={handleSubmit}
                         title={"أنشاء الحساب"}
                     />
