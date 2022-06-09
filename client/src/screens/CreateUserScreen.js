@@ -5,7 +5,7 @@ import {
     StyleSheet,
     TextInput
 } from "react-native"
-import { useStoreUser } from "../../UserProvider"
+import { useStoreUser } from "../../Providers/UserProvider"
 // Components
 import Button from "../Components/Button"
 import Input from "../Components/Input"
@@ -28,7 +28,7 @@ export default CreateUserScreen = () => {
         storeUser({
             name: username,
             avatarXML: avatar,
-            userId: uuidv4()
+            id: uuidv4()
         })
     }
 

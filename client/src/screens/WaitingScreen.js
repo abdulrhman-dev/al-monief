@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
     View,
     Text,
@@ -10,8 +10,7 @@ import { socket } from "../Utilities/SocketConnection"
 import { fillEmpty } from "../Utilities/lib"
 
 // Context
-import { useRoom } from "../../RoomProvider"
-
+import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
 // Components
 import QRCode from "react-native-qrcode-svg";
 import Button from "../Components/Button"
@@ -20,13 +19,18 @@ import Avatar from "../Components/Avatar"
 let USER_LIMIT = 4;
 
 export default WaitingScreen = ({ navigation }) => {
+    const [isDisconnected, setDisconnected] = useState(false)
     const room = useRoom()
+    const setRoom = useSetRoom()
+
     // fill empty slots with null
-    const users = fillEmpty(room.users, USER_LIMIT)
+    let users = fillEmpty(room.users, USER_LIMIT)
 
     useEffect(() => {
-        navigation.addListener('beforeRemove', (e) => {
+        let listener = (e) => {
             e.preventDefault();
+            if (isDisconnected) return navigation.dispatch(e.data.action)
+
 
             Alert.alert(
                 "الخروج من الغرفة",
@@ -43,12 +47,52 @@ export default WaitingScreen = ({ navigation }) => {
                     },
                 ]
             );
+
+        }
+
+        navigation.addListener('beforeRemove', listener)
+
+        return () => navigation.removeListener('beforeRemove', listener)
+    }, [isDisconnected])
+
+
+    useEffect(() => {
+        // sockets
+        socket.on("user-joined", user => {
+            setRoom({
+                ...room,
+                users: [...room.users, user]
+            })
         })
-    }, [navigation])
+
+        socket.on("user-left", user => {
+            console.log(user.name, "left the room")
+            room.users = room.users.filter(roomUser => roomUser.id !== user.id)
+            setRoom(room)
+        })
+
+        socket.on("disconnect", () => {
+            console.log("user disconnected")
+
+
+            setRoom({ id: "disconnected", users: [] })
+            setDisconnected(true)
+        })
+    }, [])
+
+    useEffect(() => {
+        if (isDisconnected) {
+            console.log("Triggerd", isDisconnected)
+            navigation.goBack()
+        }
+    }, [isDisconnected])
+
+    function getDisconnectedValue() {
+        return isDisconnected;
+    }
 
     return (
         <View style={WaitingScreenStyles.container}>
-
             <View style={WaitingScreenStyles.header}>
                 <Text style={WaitingScreenStyles.titleText}>أدع أصدقائك للدوخل!</Text>
             </View>
@@ -76,10 +120,7 @@ export default WaitingScreen = ({ navigation }) => {
                         type="disabled"
                     />
                 </View>
-
             </View>
-
-
         </View>
     )
 }

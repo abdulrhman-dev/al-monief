@@ -12,7 +12,7 @@
     "concurrently": "^7.2.1"
   },
   "scripts": {
-    "server": "nodemon main.js",
+    "server": "nodemon --ignore client/ main.js",
     "client": "cd ./client && expo start",
     "dev": "concurrently -k -i \" npm run client\" \" npm run server\""
   },

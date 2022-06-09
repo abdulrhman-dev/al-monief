@@ -9,8 +9,8 @@ import MainLogo from "../../assets/logo.svg"
 import Button from "../Components/Button"
 import Avatar from "../Components/Avatar"
 // Provider
-import { useUser } from "../../UserProvider"
-import { useSetRoom } from "../../RoomProvider"
+import { useUser } from "../../Providers/UserProvider"
+import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities 
 import { socket } from "../Utilities/SocketConnection"
 
@@ -19,12 +19,6 @@ import { socket } from "../Utilities/SocketConnection"
 export default HomeScreen = ({ navigation }) => {
     const user = useUser()
     const setRoomData = useSetRoom()
-
-    useEffect(() => {
-        if (user.name) {
-            socket.emit("configure-user", user)
-        }
-    }, [])
 
     function createRomm() {
         socket.emit("generate-room", id => {
@@ -49,7 +43,7 @@ export default HomeScreen = ({ navigation }) => {
                 </View>
                 <View style={HomeScreenStyles.actionSection}>
                     <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} />
-                    <Button title={"الدخول إلى غرفة "} />
+                    <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinModal")} />
                 </View>
             </View>
         </View>

@@ -12,13 +12,16 @@ const io = require("socket.io")(httpServer, {
 })
 
 let rooms = []
+const USER_LIMIT = 4
 
 io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
 
     socket.on("configure-user", user => {
+        if (socket.user) return
+
         socket.user = user
-        console.log(`Saved user for socket: ${socket.id}.`)
+        console.log(`------------->Saved ${user.name} for socket: ${socket.id}.`)
     })
 
     socket.on("generate-room", callback => {
@@ -26,11 +29,36 @@ io.on("connection", socket => {
 
         socket.join(id)
 
+        rooms.push(id)
+
         callback(id)
     })
 
+    socket.on("join-room", async (id, callback) => {
+        const match = rooms.find(roomId => roomId === id)
+        if (!match) return callback({ msg: "Room doesn't exist" }, null)
+
+        const sockets = await socket.in(id).fetchSockets()
+        const users = sockets.map(socket => socket.user)
+
+        if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
+
+
+        socket.join(id)
+        io.sockets.to(id).emit("user-joined", socket.user)
+        callback(null, {
+            id,
+            users: [...users, socket.user]
+        })
+    })
+
     socket.on("leave-room", id => {
+
+        // TODO: Change leader if the leader left the room
+
+        io.sockets.to(id).emit("user-left", socket.user)
         socket.leave(id)
+
     })
 })
 
@@ -40,12 +68,15 @@ function generateAndMatch() {
 
     if (match) generateAndMatch()
 
-    rooms.push(id)
-
     return id
 }
 
 // from socket.io docs
+io.of("/").adapter.on("delete-room", roomId => {
+    rooms = rooms.filter(id => id !== roomId)
+    console.log(`Deleted Room: ${roomId}`)
+});
+
 
 io.of("/").adapter.on("create-room", (room) => {
     console.log(`room ${room} was created`);
@@ -55,9 +86,7 @@ io.of("/").adapter.on("join-room", (room, id) => {
     console.log(`socket ${id} has joined room ${room}`);
 });
 
-io.of("/").adapter.on("leave-room", (room, id) => {
-    console.log(`socket ${id} has left room ${room}`);
-});
+
 
 httpServer.listen(process.env.PORT || 8000, () => {
     console.log("Server is running...")

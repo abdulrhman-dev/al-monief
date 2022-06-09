@@ -13,7 +13,6 @@ export default Input = ({ onChangeText, value, placeholder }) => {
             value={value}
             placeholderTextColor="#c4c2c3"
             placeholder={placeholder}
-            caretHidden={true}
         />
     )
 }
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     input: {
         height: 50,
         width: 260,
-        margin: 20,
+        margin: 2.5,
         borderWidth: 1.5,
         borderRadius: 5,
         borderColor: "#e06394",

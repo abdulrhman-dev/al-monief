@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { socket } from "../src/Utilities/SocketConnection";
 
 
 const UserContext = createContext({})
@@ -18,10 +19,10 @@ export const useStoreUser = () => {
 export default UserProvider = (props) => {
     const [user, setUser] = useState({ loading: true })
 
+
     useEffect(() => {
         getUser(setUser)
     }, [])
-
 
     return (
         <UserContext.Provider value={user}>
@@ -39,12 +40,13 @@ async function getUser(setUser) {
         // await AsyncStorage.removeItem("user")
         setUser({ loading: true })
 
-        const user = await AsyncStorage.getItem("user")
+        const value = await AsyncStorage.getItem("user")
 
-        console.log(user !== null)
+        if (value !== null) {
+            let user = JSON.parse(value)
 
-        if (user !== null) {
-            setUser(JSON.parse(user))
+            setUser(user)
+            socket.emit("configure-user", user)
         } else {
             setUser({})
         }
@@ -55,9 +57,10 @@ async function getUser(setUser) {
 
 async function storeUser(value, setUser) {
     try {
-        value = JSON.stringify(value)
-        await AsyncStorage.setItem("user", value)
-        setUser(JSON.parse(value))
+        await AsyncStorage.setItem("user", JSON.stringify(value))
+
+        setUser(value)
+        socket.emit("configure-user", value)
     } catch (err) {
         console.log(err.message, value)
     }
