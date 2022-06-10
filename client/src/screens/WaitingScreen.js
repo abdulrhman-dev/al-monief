@@ -65,8 +65,8 @@ export default WaitingScreen = ({ navigation }) => {
         setDisconnected(true)
     }, [])
 
-    const handleUserLeave = useCallback(user => {
-        let filterdUsers = room.users.filter(roomUser => roomUser.id !== user.id)
+    const handleUserLeave = useCallback(useId => {
+        let filterdUsers = room.users.filter(roomUser => roomUser.id !== useId)
 
         setRoom({
             ...room,
@@ -75,6 +75,7 @@ export default WaitingScreen = ({ navigation }) => {
     }, [room])
 
     const handleUserJoin = useCallback(user => {
+        console.log(room.users.map(user => user.name))
         setRoom({
             ...room,
             users: [...room.users, user]
@@ -92,7 +93,7 @@ export default WaitingScreen = ({ navigation }) => {
             socket.off("user-left", handleUserLeave)
             socket.off("disconnect", handleUserDisconnect)
         }
-    }, [])
+    }, [room])
 
     useEffect(() => {
         if (isDisconnected) {

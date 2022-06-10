@@ -20,7 +20,10 @@ io.on("connection", socket => {
     socket.on("configure-user", user => {
         if (socket.user) return
 
-        socket.user = user
+        socket.user = {
+            ...user,
+            id: socket.id
+        }
         console.log(`------------->Saved ${user.name} for socket: ${socket.id}.`)
     })
 
@@ -53,13 +56,7 @@ io.on("connection", socket => {
     })
 
     socket.on("leave-room", id => {
-
-        // TODO: Change leader if the leader left the room
-        io.sockets.to(id).emit("user-left", socket.user)
-        console.log(`${socket.user.name} left room: ${id}`)
-
         socket.leave(id)
-
     })
 })
 
@@ -78,9 +75,11 @@ io.of("/").adapter.on("delete-room", roomId => {
     rooms = rooms.filter(id => id !== roomId)
 });
 
-
-
-
+io.of("/").adapter.on("leave-room", (room, socketId) => {
+    // TODO: Change leader if the leader left the room
+    io.sockets.to(room).emit("user-left", socketId)
+    console.log(`${socketId} left room: ${room}`)
+})
 
 io.of("/").adapter.on("create-room", (room) => {
     console.log(`room ${room} was created`);

@@ -29,12 +29,12 @@ export default JoinScreen = ({ navigation }) => {
     }
 
     return (
-        <View style={JoinModalStyles.container}>
-            <Text style={JoinModalStyles.titleText}>طرق الدخول إلى الغُرف</Text>
+        <View style={JoinScreenStyles.container}>
+            <Text style={JoinScreenStyles.titleText}>طرق الدخول إلى الغُرف</Text>
 
 
-            <View style={JoinModalStyles.roomIdForm}>
-                <Text style={JoinModalStyles.errorText}>{errorText}</Text>
+            <View style={JoinScreenStyles.roomIdForm}>
+                <Text style={JoinScreenStyles.errorText}>{errorText}</Text>
 
                 <Input
                     onChangeText={setRoomId}
@@ -44,13 +44,13 @@ export default JoinScreen = ({ navigation }) => {
                 <Button title={"أدخل إلى الغرفة بأستخدام الكود"} onPress={joinRoom} />
             </View>
 
-            <Button title={"أدخل إلى الغرفة بأستخدام QR Code"} />
+            <Button title={"أدخل إلى الغرفة بأستخدام QR Code"} onPress={() => navigation.navigate("QrScannerScreen")} />
 
         </View>
     )
 }
 
-const JoinModalStyles = StyleSheet.create({
+const JoinScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",

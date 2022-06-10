@@ -10,9 +10,6 @@ import { useStoreUser } from "../../Providers/UserProvider"
 import Button from "../Components/Button"
 import Input from "../Components/Input"
 import DicebearAvatar from "../Components/DicebearAvatar"
-// UUID
-import "react-native-get-random-values"
-import { v4 as uuidv4 } from "uuid";
 
 const uniqueNumber = String(Math.floor((Math.random() * 5000)))
 
@@ -27,8 +24,7 @@ export default CreateUserScreen = () => {
 
         storeUser({
             name: username,
-            avatarXML: avatar,
-            id: uuidv4()
+            avatarXML: avatar
         })
     }
 

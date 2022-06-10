@@ -43,7 +43,7 @@ export default HomeScreen = ({ navigation }) => {
                 </View>
                 <View style={HomeScreenStyles.actionSection}>
                     <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} />
-                    <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinModal")} />
+                    <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinScreen")} />
                 </View>
             </View>
         </View>
