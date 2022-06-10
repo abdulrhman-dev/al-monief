@@ -45,8 +45,10 @@ async function getUser(setUser) {
         if (value !== null) {
             let user = JSON.parse(value)
 
-            setUser(user)
-            socket.emit("configure-user", user)
+            socket.emit("configure-user", user, socketUser => {
+                setUser(socketUser)
+            })
+
         } else {
             setUser({})
         }
@@ -59,8 +61,9 @@ async function storeUser(value, setUser) {
     try {
         await AsyncStorage.setItem("user", JSON.stringify(value))
 
-        setUser(value)
-        socket.emit("configure-user", value)
+        socket.emit("configure-user", value, socketUser => {
+            setUser(socketUser)
+        })
     } catch (err) {
         console.log(err.message, value)
     }

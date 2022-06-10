@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     View,
     StyleSheet,
@@ -9,18 +9,28 @@ import Input from "../Components/Input"
 import Button from "../Components/Button"
 // Provider
 import { useSetRoom } from "../../Providers/RoomProvider"
-// Socket
+// Utilities
 import { socket } from "../Utilities/SocketConnection"
+import { useDebounce } from '../Utilities/hooks'
 
 
 export default JoinScreen = ({ navigation }) => {
     const setRoom = useSetRoom()
     const [roomId, setRoomId] = useState()
+    const [loading, setLoading] = useState()
     const [errorText, setErrorText] = useState("")
+    const { debounce } = useDebounce()
 
+    useEffect(() => {
+        setLoading(false)
+    }, [])
 
     function joinRoom() {
+        setLoading(true)
+
         socket.emit("join-room", roomId, (err, room) => {
+            setLoading(false)
+
             if (err) return setErrorText(err.msg)
             setRoom(room)
             setErrorText("")
@@ -41,7 +51,7 @@ export default JoinScreen = ({ navigation }) => {
                     value={roomId}
                     placeholder={"اكتب كود الغرفة"}
                 />
-                <Button title={"أدخل إلى الغرفة بأستخدام الكود"} onPress={joinRoom} />
+                <Button type={loading ? "disabled" : "primary"} title={"أدخل إلى الغرفة بأستخدام الكود"} onPress={() => debounce(joinRoom)} />
             </View>
 
             <Button title={"أدخل إلى الغرفة بأستخدام QR Code"} onPress={() => navigation.navigate("QrScannerScreen")} />

@@ -17,13 +17,15 @@ const USER_LIMIT = 4
 io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
 
-    socket.on("configure-user", user => {
+    socket.on("configure-user", (user, callback) => {
         if (socket.user) return
 
         socket.user = {
             ...user,
             id: socket.id
         }
+
+        callback(socket.user)
         console.log(`------------->Saved ${user.name} for socket: ${socket.id}.`)
     })
 
@@ -32,14 +34,22 @@ io.on("connection", socket => {
 
         socket.join(id)
 
-        rooms.push(id)
+        let roomData = {
+            id,
+            users: [socket.user],
+            leader: socket.user
+        }
 
-        callback(id)
+        rooms.push(roomData)
+
+
+
+        callback(roomData)
     })
 
     socket.on("join-room", async (id, callback) => {
-        const match = rooms.find(roomId => roomId === id)
-        if (!match) return callback({ msg: "Room doesn't exist" }, null)
+        const match = rooms.findIndex(room => room.id === id)
+        if (match === -1) return callback({ msg: "Room doesn't exist" }, null)
 
         const sockets = await socket.in(id).fetchSockets()
         const users = sockets.map(socket => socket.user)
@@ -47,12 +57,17 @@ io.on("connection", socket => {
         if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
 
 
+        rooms[match] = {
+            ...rooms[match],
+            users: [...rooms[match].users, socket.user]
+        }
+
         socket.join(id)
+
+
+        callback(null, rooms[match])
+
         io.sockets.to(id).emit("user-joined", socket.user)
-        callback(null, {
-            id,
-            users: [...users, socket.user]
-        })
     })
 
     socket.on("leave-room", id => {
@@ -62,7 +77,7 @@ io.on("connection", socket => {
 
 function generateAndMatch() {
     const id = generateShortId()
-    const match = rooms.find(roomId => roomId === id)
+    const match = rooms.find(room => room.id === id)
 
     if (match) generateAndMatch()
 
@@ -72,13 +87,39 @@ function generateAndMatch() {
 
 io.of("/").adapter.on("delete-room", roomId => {
     console.log(`Deleted Room: ${roomId}`)
-    rooms = rooms.filter(id => id !== roomId)
+    rooms = rooms.filter(room => room.id !== roomId)
 });
 
-io.of("/").adapter.on("leave-room", (room, socketId) => {
-    // TODO: Change leader if the leader left the room
-    io.sockets.to(room).emit("user-left", socketId)
-    console.log(`${socketId} left room: ${room}`)
+io.of("/").adapter.on("leave-room", (roomId, socketId) => {
+    const match = rooms.findIndex(room => room.id === roomId)
+
+    if (match === -1) return;
+
+    // if the user that is leaving is the last user
+    if (rooms[match].users.length === 1) return;
+    // if the user that is leaving isn't the leader
+    let filterdUsers = rooms[match].users.filter(roomUser => roomUser.id !== socketId)
+
+
+
+
+    if (rooms[match].leader.id !== socketId) {
+        rooms[match] = {
+            ...rooms[match],
+            users: filterdUsers
+        }
+        return io.sockets.to(roomId).emit("user-left", { roomData: rooms[match] })
+    }
+
+    console.log()
+    rooms[match] = {
+        ...rooms[match],
+        leader: rooms[match].users[1],
+        users: filterdUsers
+    }
+
+    io.sockets.to(roomId).emit("user-left", { roomData: rooms[match] })
+    console.log(`${socketId} left room: ${roomId}`)
 })
 
 io.of("/").adapter.on("create-room", (room) => {

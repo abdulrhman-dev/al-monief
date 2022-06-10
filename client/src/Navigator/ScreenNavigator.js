@@ -10,7 +10,7 @@ import JoinScreen from "../Screens/JoinScreen";
 import QrScannerScreen from "../Screens/QrScannerScreen";
 
 // Context Provider
-import { useUser } from "../../Providers/UserProvider"
+import { useUser, useStoreUser } from "../../Providers/UserProvider"
 // Utilties
 import { socket } from "../Utilities/SocketConnection"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -20,6 +20,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 const Stack = createNativeStackNavigator();
 
 const ScreenNavigator = () => {
+    const user = useUser()
+    const setUser = useStoreUser()
 
     useEffect(() => {
 
@@ -27,7 +29,9 @@ const ScreenNavigator = () => {
             console.log("socket reconnected...")
             const value = await AsyncStorage.getItem("user")
             if (value) {
-                socket.emit("configure-user", JSON.parse(value))
+                socket.emit("configure-user", JSON.parse(value), socketUser => {
+                    setUser(socketUser)
+                })
             }
         }
 
@@ -39,7 +43,6 @@ const ScreenNavigator = () => {
         }
     }, [])
 
-    const user = useUser()
 
 
     if (user.loading) {

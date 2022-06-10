@@ -10,6 +10,7 @@ import Button from "../Components/Button"
 // Utilities
 import { useSetRoom } from "../../Providers/RoomProvider"
 import { socket } from "../Utilities/SocketConnection"
+import { useDebounce } from "../Utilities/hooks"
 
 
 // original code for more info: https://www.youtube.com/watch?v=LtbuOgoQJAg
@@ -20,6 +21,7 @@ export default QrScannerScreen = ({ navigation }) => {
     const [scanned, setScanned] = useState(false)
     const [qrCode, setQrCode] = useState("")
     const [errorText, setErrorText] = useState("")
+    const { debounce } = useDebounce()
 
 
     const askForCameraPermission = () => {
@@ -46,9 +48,14 @@ export default QrScannerScreen = ({ navigation }) => {
     }
 
     const handleJoinRoom = () => {
+        setScanned(false)
+        setErrorText("")
+        setQrCode("")
+
         socket.emit("join-room", qrCode, (err, room) => {
             if (err) return setErrorText(err.msg)
             setRoom(room)
+            console.log(room.users.map(user => user.name))
             setErrorText("")
             navigation.navigate("WaitingScreen")
         })
@@ -81,13 +88,7 @@ export default QrScannerScreen = ({ navigation }) => {
     return (
         <View style={QrScannerScreenStyles.container}>
 
-            {/* <View style={QrScannerScreenStyles.barcodeBox}>
-                <BarCodeScanner
-                    onBarCodeScanned={handleBarCodeScanned }
-                    style={{ width: 500, height: 500 }}
-                />
-            </View>
-            <Text style={QrScannerScreenStyles.text}>{qrCode}</Text> */}
+
             <View style={QrScannerScreenStyles.barcodeBox}>
                 <BarCodeScanner
                     onBarCodeScanned={!scanned ? handleBarCodeScanned : null}
@@ -98,7 +99,7 @@ export default QrScannerScreen = ({ navigation }) => {
             <Button
                 title={`${qrCode} ادخل الغرفة`}
                 type={!scanned ? "disabled" : "primary"}
-                onPress={handleJoinRoom}
+                onPress={() => debounce(handleJoinRoom)}
             />
             {
                 scanned ?

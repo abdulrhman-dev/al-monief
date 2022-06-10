@@ -8,19 +8,21 @@ import {
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
 import { fillEmpty } from "../Utilities/lib"
-
 // Context
 import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
+import { useUser } from "../../Providers/UserProvider"
 // Components
 import QRCode from "react-native-qrcode-svg";
 import Button from "../Components/Button"
 import Avatar from "../Components/Avatar"
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 let USER_LIMIT = 4;
 
 export default WaitingScreen = ({ navigation }) => {
     const [isDisconnected, setDisconnected] = useState(false)
     const room = useRoom()
+    const user = useUser()
     const setRoom = useSetRoom()
 
 
@@ -43,6 +45,7 @@ export default WaitingScreen = ({ navigation }) => {
                         text: "أخرج من الغرفة",
                         style: 'destructive',
                         onPress: () => {
+                            setRoom({ id: "disconnected", users: [], leader: {} })
                             socket.emit("leave-room", room.id)
                             navigation.dispatch(e.data.action)
                         },
@@ -61,17 +64,12 @@ export default WaitingScreen = ({ navigation }) => {
     const handleUserDisconnect = useCallback(() => {
         console.log("user disconnected")
 
-        setRoom({ id: "disconnected", users: [] })
+        setRoom({ id: "disconnected", users: [], leader: {} })
         setDisconnected(true)
     }, [])
 
-    const handleUserLeave = useCallback(useId => {
-        let filterdUsers = room.users.filter(roomUser => roomUser.id !== useId)
-
-        setRoom({
-            ...room,
-            users: filterdUsers
-        })
+    const handleUserLeave = useCallback(({ roomData }) => {
+        setRoom(roomData)
     }, [room])
 
     const handleUserJoin = useCallback(user => {
@@ -118,28 +116,46 @@ export default WaitingScreen = ({ navigation }) => {
                 </View>
 
                 <View style={WaitingScreenStyles.avatarsBar}>
-                    {users.map((user, index) => {
-                        if (user === null) return <UnAvailableUser key={index} />
+                    {users.map((roomUser, index) => {
+                        if (roomUser === null) return <UnAvailableUser key={index} />
 
-                        return <AvailableUser key={index} user={user} />
+                        return <AvailableUser key={index} user={roomUser} leader={room.leader} border={roomUser.id === user.id} />
                     })}
                 </View>
 
-                <View style={WaitingScreenStyles.button}>
-                    <Button
-                        title={"أبدا اللعبة"}
-                        type="disabled"
-                    />
-                </View>
+                {
+                    room.leader.id === user.id
+
+                    &&
+
+                    <View style={WaitingScreenStyles.button}>
+                        <Button
+                            title={"أبدا اللعبة"}
+                            type="disabled"
+                        />
+                    </View>
+                }
+
+
             </View>
         </View>
     )
 }
 
 
-function AvailableUser({ user }) {
+function AvailableUser({ user, leader, border }) {
     return (
-        <View style={AvatarBarStyles.availableUser}>
+        <View style={[AvatarBarStyles.availableUser, border ? AvatarBarStyles.border : null]}>
+            {
+                leader.id === user.id
+
+                &&
+
+                <View style={AvatarBarStyles.leaderIcon} >
+                    <MaterialCommunityIcons name="crown" size={28} color="#FFD700" />
+                </View>
+            }
+
             <Avatar xml={user.avatarXML} width="70" height="70" />
             <View style={AvatarBarStyles.textContainer}>
                 <Text
@@ -161,7 +177,8 @@ function UnAvailableUser() {
 
 const AvatarBarStyles = StyleSheet.create({
     availableUser: {
-        position: "relative"
+        position: "relative",
+        borderRadius: 50
     },
     unavailableUser: {
         position: "relative",
@@ -180,9 +197,23 @@ const AvatarBarStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+    leaderIcon: {
+        position: "absolute",
+        zIndex: 2,
+        width: "100%",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        top: -30
+    },
     text: {
         fontFamily: "NotoKufiArabic-Medium",
         fontSize: 11.5
+    },
+    border: {
+        borderColor: "#e06394",
+        borderWidth: 3,
+        borderRadius: 50
     }
 })
 
@@ -228,7 +259,8 @@ const WaitingScreenStyles = StyleSheet.create({
         flex: 1.5,
         flexDirection: "row",
         justifyContent: "space-around",
-        alignItems: "center"
+        alignItems: "center",
+        margin: 15
     },
     button: {
         flex: 1,

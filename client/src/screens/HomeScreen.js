@@ -21,8 +21,8 @@ export default HomeScreen = ({ navigation }) => {
     const setRoomData = useSetRoom()
 
     function createRomm() {
-        socket.emit("generate-room", id => {
-            setRoomData({ id, users: [user] })
+        socket.emit("generate-room", room => {
+            setRoomData(room)
             navigation.navigate("WaitingScreen")
         })
     }

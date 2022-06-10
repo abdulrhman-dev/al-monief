@@ -6,8 +6,7 @@ import RNBootSplash from "react-native-bootsplash";
 import { useFonts } from "expo-font"
 import ScreenNavigator from './src/Navigator/ScreenNavigator';
 // Providers
-import UserProvider from './Providers/UserProvider';
-import RoomProvider from './Providers/RoomProvider';
+import AppContextProvider from "./Providers/AppContextProvider"
 
 
 
@@ -23,20 +22,17 @@ export default function App() {
     hideSplashScreen()
   }, []);
 
-
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <UserProvider>
-      <RoomProvider>
-        <View style={styles.container}>
-          <StatusBar style="auto" />
-          <ScreenNavigator />
-        </View>
-      </RoomProvider>
-    </UserProvider>
+    <AppContextProvider>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <ScreenNavigator />
+      </View>
+    </AppContextProvider>
   );
 }
 
