@@ -23,6 +23,7 @@ export default JoinScreen = ({ navigation }) => {
         socket.emit("join-room", roomId, (err, room) => {
             if (err) return setErrorText(err.msg)
             setRoom(room)
+            setErrorText("")
             navigation.navigate("WaitingScreen")
         })
     }

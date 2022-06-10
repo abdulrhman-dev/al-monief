@@ -32,7 +32,8 @@
     "react-native-web": "0.17.7",
     "socket.io-client": "^4.5.1",
     "uuid": "^8.3.2",
-    "webpack-dev-server": "^4.9.1"
+    "webpack-dev-server": "^4.9.1",
+    "expo-barcode-scanner": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

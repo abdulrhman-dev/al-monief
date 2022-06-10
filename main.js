@@ -55,8 +55,9 @@ io.on("connection", socket => {
     socket.on("leave-room", id => {
 
         // TODO: Change leader if the leader left the room
-
         io.sockets.to(id).emit("user-left", socket.user)
+        console.log(`${socket.user.name} left room: ${id}`)
+
         socket.leave(id)
 
     })
@@ -71,11 +72,14 @@ function generateAndMatch() {
     return id
 }
 
-// from socket.io docs
+
 io.of("/").adapter.on("delete-room", roomId => {
-    rooms = rooms.filter(id => id !== roomId)
     console.log(`Deleted Room: ${roomId}`)
+    rooms = rooms.filter(id => id !== roomId)
 });
+
+
+
 
 
 io.of("/").adapter.on("create-room", (room) => {

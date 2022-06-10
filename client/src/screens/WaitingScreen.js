@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import {
     View,
     Text,
@@ -23,11 +23,13 @@ export default WaitingScreen = ({ navigation }) => {
     const room = useRoom()
     const setRoom = useSetRoom()
 
+
     // fill empty slots with null
     let users = fillEmpty(room.users, USER_LIMIT)
 
     useEffect(() => {
         let listener = (e) => {
+            console.log(isDisconnected)
             e.preventDefault();
             if (isDisconnected) return navigation.dispatch(e.data.action)
 
@@ -56,28 +58,40 @@ export default WaitingScreen = ({ navigation }) => {
     }, [isDisconnected])
 
 
+    const handleUserDisconnect = useCallback(() => {
+        console.log("user disconnected")
+
+        setRoom({ id: "disconnected", users: [] })
+        setDisconnected(true)
+    }, [])
+
+    const handleUserLeave = useCallback(user => {
+        let filterdUsers = room.users.filter(roomUser => roomUser.id !== user.id)
+
+        setRoom({
+            ...room,
+            users: filterdUsers
+        })
+    }, [room])
+
+    const handleUserJoin = useCallback(user => {
+        setRoom({
+            ...room,
+            users: [...room.users, user]
+        })
+    }, [room])
+
     useEffect(() => {
         // sockets
-        socket.on("user-joined", user => {
-            setRoom({
-                ...room,
-                users: [...room.users, user]
-            })
-        })
+        socket.on("user-joined", handleUserJoin)
+        socket.on("user-left", handleUserLeave)
+        socket.on("disconnect", handleUserDisconnect)
 
-        socket.on("user-left", user => {
-            console.log(user.name, "left the room")
-            room.users = room.users.filter(roomUser => roomUser.id !== user.id)
-            setRoom(room)
-        })
-
-        socket.on("disconnect", () => {
-            console.log("user disconnected")
-
-
-            setRoom({ id: "disconnected", users: [] })
-            setDisconnected(true)
-        })
+        return () => {
+            socket.off("user-joined", handleUserJoin)
+            socket.off("user-left", handleUserLeave)
+            socket.off("disconnect", handleUserDisconnect)
+        }
     }, [])
 
     useEffect(() => {
@@ -86,10 +100,6 @@ export default WaitingScreen = ({ navigation }) => {
             navigation.goBack()
         }
     }, [isDisconnected])
-
-    function getDisconnectedValue() {
-        return isDisconnected;
-    }
 
     return (
         <View style={WaitingScreenStyles.container}>
