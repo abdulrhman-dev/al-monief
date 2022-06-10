@@ -31,7 +31,6 @@ export default WaitingScreen = ({ navigation }) => {
 
     useEffect(() => {
         let listener = (e) => {
-            console.log(isDisconnected)
             e.preventDefault();
             if (isDisconnected) return navigation.dispatch(e.data.action)
 
@@ -131,7 +130,7 @@ export default WaitingScreen = ({ navigation }) => {
                     <View style={WaitingScreenStyles.button}>
                         <Button
                             title={"أبدا اللعبة"}
-                            type="disabled"
+                            onPress={() => navigation.navigate("MainGameScreen")}
                         />
                     </View>
                 }

@@ -14,10 +14,12 @@ import { useUser, useStoreUser } from "../../Providers/UserProvider"
 // Utilties
 import { socket } from "../Utilities/SocketConnection"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-
+import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 
 
 const Stack = createNativeStackNavigator();
+
+let round = 1
 
 const ScreenNavigator = () => {
     const user = useUser()
@@ -69,6 +71,7 @@ const UserFound = () => (
         <Stack.Screen name="WaitingScreen" component={WaitingScreen} />
         <Stack.Screen name="JoinScreen" component={JoinScreen} />
         <Stack.Screen name="QrScannerScreen" component={QrScannerScreen} />
+        <Stack.Screen name="MainGameScreen" component={MainGameScreen} />
     </Stack.Navigator>
 )
 

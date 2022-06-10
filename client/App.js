@@ -29,7 +29,7 @@ export default function App() {
   return (
     <AppContextProvider>
       <View style={styles.container}>
-        <StatusBar style="auto" />
+        <StatusBar style="auto" translucent={false} />
         <ScreenNavigator />
       </View>
     </AppContextProvider>

@@ -100,9 +100,6 @@ io.of("/").adapter.on("leave-room", (roomId, socketId) => {
     // if the user that is leaving isn't the leader
     let filterdUsers = rooms[match].users.filter(roomUser => roomUser.id !== socketId)
 
-
-
-
     if (rooms[match].leader.id !== socketId) {
         rooms[match] = {
             ...rooms[match],
