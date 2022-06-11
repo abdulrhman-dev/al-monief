@@ -4,15 +4,13 @@ import {
     StyleSheet
 } from "react-native"
 
-export default Input = ({ onChangeText, value, placeholder }) => {
+export default Input = (props) => {
 
     return (
         <TextInput
             style={styles.input}
-            onChangeText={onChangeText}
-            value={value}
             placeholderTextColor="#c4c2c3"
-            placeholder={placeholder}
+            {...props}
         />
     )
 }

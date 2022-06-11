@@ -5,6 +5,8 @@ import {
 } from "react-native"
 // Components 
 import RoundBar from "./RoundBar"
+import StageBar from "./StageBar"
+
 
 export default MainGameScreen = ({ navigation }) => {
 
@@ -21,6 +23,7 @@ export default MainGameScreen = ({ navigation }) => {
     return (
         <View style={MainGameScreenStyles.container}>
             <RoundBar round={1} />
+            <StageBar stage={4} />
         </View>
     )
 }
