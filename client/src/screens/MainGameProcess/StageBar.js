@@ -2,19 +2,28 @@ import React from "react"
 import {
     View,
     Text,
+    TouchableHighlight,
     StyleSheet
 } from "react-native"
+// Icon
+import { MaterialIcons } from '@expo/vector-icons';
 // Data
 import items from "./stageBarItems"
 
 
-export default StageBar = ({ stage = 1 }) => {
+export default StageBar = ({ stage = 1, setStage, finished }) => {
 
 
     return (
         <View style={styles.stageBarContainer}>
             {items.map((item, index) => (
-                <StagePoint item={item} active={(index + 1) <= stage} />
+                <StagePoint
+                    key={index}
+                    item={item}
+                    active={(index + 1) <= stage}
+                    onPress={() => setStage(index + 1)}
+                    finished={finished.find(finishedItem => item.title === finishedItem) !== undefined}
+                />
             ))}
 
 
@@ -26,25 +35,33 @@ export default StageBar = ({ stage = 1 }) => {
     )
 }
 
-const StagePoint = ({ item, active }) => {
+const StagePoint = ({ item, active, onPress, finished }) => {
 
     return (
-        <View style={[styles.stagePointContainer, { backgroundColor: active ? "#e06394" : "lightgrey" }]}>
-            <View style={styles.stagePointIcon}>
-                {item.icon}
-            </View>
-            <View style={styles.stagePointTextContainer}>
-                <Text style={styles.stagePointText}>
-                    {item.title}
-                </Text>
-            </View>
-        </View>
+        <TouchableHighlight
+            underlayColor="#ddd"
+            style={[styles.stagePointContainer, { backgroundColor: active ? "#e06394" : "lightgrey" }]}
+            onPress={onPress}
+        >
+            <>
+                <View style={styles.stagePointIcon}>
+                    {!finished ? item.icon : <MaterialIcons name="check" size={24} color="white" />}
+                </View>
+                <View style={styles.stagePointTextContainer}>
+                    <Text style={styles.stagePointText}>
+                        {item.title}
+                    </Text>
+                </View>
+            </>
+        </TouchableHighlight>
     )
 }
 
 const StageLine = ({ stage, active }) => {
     return (
-        <View style={active ? [styles.stageLine, { width: `${(stage - 1) * 20}%` }] : [styles.stageLine, styles.stageLineInActive]} />
+        <View
+            style={active ? [styles.stageLine, { width: `${(stage - 1) * 20}%` }] : [styles.stageLine, styles.stageLineInActive]}
+        />
     )
 }
 

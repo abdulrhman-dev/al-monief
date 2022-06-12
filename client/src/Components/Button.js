@@ -5,7 +5,7 @@ import {
     StyleSheet
 } from "react-native"
 
-export default Button = ({ onPress, title, type }) => {
+export default Button = ({ onPress, title, type, style = {}, children }) => {
 
     // Disabled Logic
     onPress = type === "disabled" ? null : onPress
@@ -29,8 +29,9 @@ export default Button = ({ onPress, title, type }) => {
     }
 
     return (
-        <Pressable style={getButtonStyle()} onPress={onPress}>
-            <Text style={getTextStyle()}>{title}</Text>
+        <Pressable style={[getButtonStyle(), style]} onPress={onPress}>
+            {title && <Text style={getTextStyle()}>{title}</Text>}
+            {children}
         </Pressable>
     )
 }
