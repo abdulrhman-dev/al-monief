@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import {
     View,
     Text,
@@ -12,25 +12,58 @@ import Button from "../../Components/Button"
 import { MaterialIcons } from '@expo/vector-icons';
 // data
 import items from "./stageBarItems"
+// Utilities
+import { useGame, useStoreGame } from "../../../Providers/GameProvider"
+import { socket } from "../../Utilities/SocketConnection"
 
 
-const LETTER = "أ"
 const MAX_STAGE_NUMBER = 5
 const MAX_ROUND_NUMBER = 5
 
 export default MainGameScreen = ({ navigation }) => {
+    const game = useGame()
+    const setGame = useStoreGame()
+
     const [stage, setStage] = useState(1)
-    const [words, setWords] = useState(LETTER)
+    const [words, setWords] = useState({})
     const [finished, setFinished] = useState([])
+    const [round, setRound] = useState(1)
+    const LETTER = game.roundsLetters[round - 1]
+
+    const handleOnGameEnd = useCallback(() => {
+        setGame({
+            roundWords: [],
+            isCountdown: null,
+            roundsLetters: []
+        })
+        console.log("Game Ended")
+        navigation.replace("HomeScreen")
+    }, [])
+
+    useEffect(() => {
+        socket.on("game-ended", handleOnGameEnd)
+
+        return () => {
+            socket.off("game-ended", handleOnGameEnd)
+        }
+    }, [socket])
+
+    useEffect(() => {
+        console.log(game)
+    }, [])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
             // ? you'll only be able to leave in checkpoints only
-            // e.preventDefault();
+            if (e.data.action.type !== "GO_BACK") return;
+
+            e.preventDefault();
+
+            if (stage - 1 > 0) setStage(stage - 1)
         })
 
         return unsubscribe
-    }, [navigation])
+    }, [navigation, stage])
 
     const handleWordChange = (e, name) => {
         let value = e.nativeEvent.text
@@ -53,29 +86,38 @@ export default MainGameScreen = ({ navigation }) => {
 
     }
 
-    useEffect(() => {
-        console.log(finished)
-    }, [finished])
-
-
     const handleProgress = () => {
         const value = words[items[stage - 1].title]
 
 
         if (value === LETTER || !value) return;
 
-        setStage(stage + 1)
+        if (stage + 1 > MAX_STAGE_NUMBER) {
+            if (finished.length !== MAX_STAGE_NUMBER) return;
 
+            return handleSubmit()
+        }
+
+        setStage(stage + 1)
     }
 
     const handleSubmit = () => {
+        if (round + 1 > MAX_ROUND_NUMBER) return;
 
+        setGame({
+            ...game,
+            roundWords: [...game.roundWords, words]
+        })
+        setWords({})
+        setStage(1)
+        setFinished([])
+        setRound(round + 1)
     }
 
     return (
         <View style={MainGameScreenStyles.container}>
             <View style={MainGameScreenStyles.header}>
-                <RoundBar round={1} />
+                <RoundBar round={round} />
                 <StageBar stage={stage} setStage={setStage} finished={finished} />
             </View>
 
@@ -103,7 +145,7 @@ export default MainGameScreen = ({ navigation }) => {
                             <Button
                                 onPress={handleSubmit}
                                 type={stage === 1 ? "disabled" : "secondary"}
-                                style={{ backgroundColor: "#4fdb74", width: "100%" }}
+                                style={{ backgroundColor: "#4fdb74", width: "90%" }}
                             >
                                 <MaterialIcons name="check" size={28} color="white" />
                             </Button>

@@ -54,6 +54,8 @@ io.on("connection", socket => {
         const sockets = await socket.in(id).fetchSockets()
         const users = sockets.map(socket => socket.user)
 
+        if (match.started) return callback({ msg: "Game has already started" }, null)
+
         if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
 
 
@@ -68,6 +70,20 @@ io.on("connection", socket => {
         callback(null, rooms[match])
 
         io.sockets.to(id).emit("user-joined", socket.user)
+    })
+
+    socket.on("start-game", ({ roomId, game }, callback) => {
+        const match = rooms.findIndex(room => room.id === roomId)
+
+        rooms[match] = {
+            ...rooms[match],
+            started: true,
+            game
+        }
+
+        io.sockets.to(roomId).emit("emit-start-game", game)
+
+        callback()
     })
 
     socket.on("leave-room", id => {
@@ -96,8 +112,14 @@ io.of("/").adapter.on("leave-room", (roomId, socketId) => {
     if (match === -1) return;
 
     // if the user that is leaving is the last user
-    if (rooms[match].users.length === 1) return;
+    if (rooms[match].users.length === 1) return rooms.splice(match, 1);
+
     // if the user that is leaving isn't the leader
+    if (rooms[match].users.length - 1 === 1 && rooms[match].started) {
+        io.sockets.to(roomId).emit("game-ended", {})
+        return rooms.splice(match, 1);
+    }
+
     let filterdUsers = rooms[match].users.filter(roomUser => roomUser.id !== socketId)
 
     if (rooms[match].leader.id !== socketId) {
@@ -105,10 +127,11 @@ io.of("/").adapter.on("leave-room", (roomId, socketId) => {
             ...rooms[match],
             users: filterdUsers
         }
+
         return io.sockets.to(roomId).emit("user-left", { roomData: rooms[match] })
     }
 
-    console.log()
+    // if the user that is leaving is the leader
     rooms[match] = {
         ...rooms[match],
         leader: rooms[match].users[1],
@@ -116,6 +139,7 @@ io.of("/").adapter.on("leave-room", (roomId, socketId) => {
     }
 
     io.sockets.to(roomId).emit("user-left", { roomData: rooms[match] })
+
     console.log(`${socketId} left room: ${roomId}`)
 })
 

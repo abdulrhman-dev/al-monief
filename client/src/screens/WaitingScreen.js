@@ -7,9 +7,10 @@ import {
 } from "react-native"
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
-import { fillEmpty } from "../Utilities/lib"
+import { fillEmpty, generateLetters } from "../Utilities/lib"
 // Context
 import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
+import { useStoreGame, useGame } from "../../Providers/GameProvider"
 import { useUser } from "../../Providers/UserProvider"
 // Components
 import QRCode from "react-native-qrcode-svg";
@@ -24,16 +25,17 @@ export default WaitingScreen = ({ navigation }) => {
     const room = useRoom()
     const user = useUser()
     const setRoom = useSetRoom()
-
+    const setGame = useStoreGame()
 
     // fill empty slots with null
     let users = fillEmpty(room.users, USER_LIMIT)
 
     useEffect(() => {
         let listener = (e) => {
+            if (e.data.action.type !== "GO_BACK") return;
+
             e.preventDefault();
             if (isDisconnected) return navigation.dispatch(e.data.action)
-
 
             Alert.alert(
                 "الخروج من الغرفة",
@@ -79,15 +81,22 @@ export default WaitingScreen = ({ navigation }) => {
         })
     }, [room])
 
+    const handleOnStartGame = useCallback(game => {
+        setGame(game)
+        navigation.replace("MainGameScreen")
+    }, [])
+
     useEffect(() => {
         // sockets
         socket.on("user-joined", handleUserJoin)
         socket.on("user-left", handleUserLeave)
+        socket.on("emit-start-game", handleOnStartGame)
         socket.on("disconnect", handleUserDisconnect)
 
         return () => {
             socket.off("user-joined", handleUserJoin)
             socket.off("user-left", handleUserLeave)
+            socket.off("emit-start-game", handleOnStartGame)
             socket.off("disconnect", handleUserDisconnect)
         }
     }, [room])
@@ -98,6 +107,20 @@ export default WaitingScreen = ({ navigation }) => {
             navigation.goBack()
         }
     }, [isDisconnected])
+
+    const handleStartGame = () => {
+        let game = {
+            roundWords: [],
+            isCountdown: null,
+            roundsLetters: generateLetters(5)
+        }
+
+        setGame(game)
+
+        socket.emit("start-game", { roomId: room.id, game }, () => {
+            navigation.replace("MainGameScreen")
+        })
+    }
 
     return (
         <View style={WaitingScreenStyles.container}>
@@ -129,8 +152,9 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <View style={WaitingScreenStyles.button}>
                         <Button
+                            type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
-                            onPress={() => navigation.navigate("MainGameScreen")}
+                            onPress={handleStartGame}
                         />
                     </View>
                 }

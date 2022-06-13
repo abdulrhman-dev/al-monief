@@ -8,13 +8,14 @@ import CreateUserScreen from "../Screens/CreateUserScreen";
 import WaitingScreen from "../Screens/WaitingScreen";
 import JoinScreen from "../Screens/JoinScreen";
 import QrScannerScreen from "../Screens/QrScannerScreen";
-
+import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 // Context Provider
 import { useUser, useStoreUser } from "../../Providers/UserProvider"
+import { useGame } from "../../Providers/GameProvider"
+
 // Utilties
 import { socket } from "../Utilities/SocketConnection"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -60,20 +61,28 @@ const ScreenNavigator = () => {
     )
 }
 
-const UserFound = () => (
-    <Stack.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={{
-            headerShown: false
-        }}
-    >
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="WaitingScreen" component={WaitingScreen} />
-        <Stack.Screen name="JoinScreen" component={JoinScreen} />
-        <Stack.Screen name="QrScannerScreen" component={QrScannerScreen} />
-        <Stack.Screen name="MainGameScreen" component={MainGameScreen} />
-    </Stack.Navigator>
-)
+const UserFound = () => {
+    const game = useGame()
+
+    return (
+        <Stack.Navigator
+            initialRouteName="HomeScreen"
+            screenOptions={{
+                headerShown: false
+            }}
+        >
+            <Stack.Group>
+                <Stack.Screen name="HomeScreen" component={HomeScreen} />
+                <Stack.Screen name="WaitingScreen" component={WaitingScreen} />
+                <Stack.Screen name="JoinScreen" component={JoinScreen} />
+                <Stack.Screen name="QrScannerScreen" component={QrScannerScreen} />
+            </Stack.Group>
+            <Stack.Group>
+                <Stack.Screen name="MainGameScreen" component={MainGameScreen} />
+            </Stack.Group>
+        </Stack.Navigator>
+    )
+}
 
 const UserMissing = () => (
     <Stack.Navigator
