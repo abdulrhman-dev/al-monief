@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import RNBootSplash from "react-native-bootsplash";
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 // Fonts
 import { useFonts } from "expo-font"
 import ScreenNavigator from './src/Navigator/ScreenNavigator';
@@ -28,10 +29,12 @@ export default function App() {
 
   return (
     <AppContextProvider>
-      <View style={styles.container}>
-        <StatusBar style="auto" translucent={false} />
-        <ScreenNavigator />
-      </View>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <StatusBar style="auto" translucent={false} />
+          <ScreenNavigator />
+        </View>
+      </GestureHandlerRootView>
     </AppContextProvider>
   );
 }

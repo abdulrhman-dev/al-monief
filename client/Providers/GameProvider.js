@@ -20,7 +20,7 @@ export default GameProvider = ({ children }) => {
     const [game, setGame] = useState(initialState)
 
     const handleReceiveLeaderBoard = useCallback(userWords => {
-        console.log("leaderboard-submit", userWords)
+        console.log("leaderboard-submit")
         setGame({
             ...game,
             userWords
@@ -33,7 +33,7 @@ export default GameProvider = ({ children }) => {
         return () => {
             socket.off("leaderboard-submit", handleReceiveLeaderBoard)
         }
-    }, [])
+    }, [game, setGame])
 
     return (
         <GameContext.Provider value={game}>

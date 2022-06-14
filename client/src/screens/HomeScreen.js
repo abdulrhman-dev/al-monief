@@ -13,6 +13,7 @@ import { useUser } from "../../Providers/UserProvider"
 import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities 
 import { socket } from "../Utilities/SocketConnection"
+import SwipeableButton from "../Components/SwipeableButton"
 
 
 
@@ -35,7 +36,6 @@ export default HomeScreen = ({ navigation }) => {
                     width={150}
                 />
             </View>
-
             <View style={HomeScreenStyles.body}>
                 <View style={HomeScreenStyles.profile}>
                     <Avatar xml={user.avatarXML} width="120" height="120" />
@@ -44,6 +44,7 @@ export default HomeScreen = ({ navigation }) => {
                 <View style={HomeScreenStyles.actionSection}>
                     <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} />
                     <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinScreen")} />
+
                 </View>
             </View>
         </View>

@@ -135,10 +135,10 @@ export default MainGameScreen = ({ navigation }) => {
     const submitWords = () => {
         socket.emit("submit-game", { roomId: room.id, roundWords: words }, () => {
             if (user.id === room.leader.id) {
-                return navigation.replace("HomeScreen")
+                return navigation.replace("CheckingScreen")
             }
 
-            return navigation.replace("HomeScreen")
+            return navigation.replace("LeaderboardScreen")
         })
     }
 

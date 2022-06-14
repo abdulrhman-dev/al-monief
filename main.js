@@ -83,7 +83,7 @@ io.on("connection", socket => {
             game
         }
 
-        io.sockets.to(roomId).emit("emit-start-game", game)
+        socket.broadcast.to(roomId).emit("emit-start-game", game)
 
         callback()
     })
@@ -98,16 +98,14 @@ io.on("connection", socket => {
 
         rooms[match] = {
             ...rooms[match],
-            userWords: [...rooms[match].userWords, roundWords]
+            userWords: [...rooms[match].userWords, { words: roundWords, user: socket.user }]
         }
 
         if (rooms[match].userWords.length === rooms[match].users.length) {
-            console.log("gotcha bruh")
-            socket.to(rooms[match].leader.id).emit("leaderboard-submit", rooms[match].userWords);
+            io.to(rooms[match].leader.id).emit("leaderboard-submit", rooms[match].userWords);
         }
 
         callback()
-
     })
 
     socket.on("leave-room", id => {

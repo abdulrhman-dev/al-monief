@@ -9,6 +9,8 @@ import WaitingScreen from "../Screens/WaitingScreen";
 import JoinScreen from "../Screens/JoinScreen";
 import QrScannerScreen from "../Screens/QrScannerScreen";
 import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
+import CheckingScreen from "../Screens/CheckingScreen";
+import LeaderboardScreen from "../Screens/LeaderboardScreen";
 // Context Provider
 import { useUser, useStoreUser } from "../../Providers/UserProvider"
 import { useGame } from "../../Providers/GameProvider"
@@ -79,6 +81,8 @@ const UserFound = () => {
             </Stack.Group>
             <Stack.Group>
                 <Stack.Screen name="MainGameScreen" component={MainGameScreen} />
+                <Stack.Screen name="CheckingScreen" component={CheckingScreen} />
+                <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} />
             </Stack.Group>
         </Stack.Navigator>
     )

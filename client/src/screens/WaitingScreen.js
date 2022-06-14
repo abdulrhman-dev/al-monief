@@ -115,10 +115,11 @@ export default WaitingScreen = ({ navigation }) => {
             roundsLetters: generateLetters(5)
         }
 
-        setGame(game)
 
         socket.emit("start-game", { roomId: room.id, game }, () => {
             navigation.replace("MainGameScreen")
+            setGame(game)
+
         })
     }
 
@@ -152,7 +153,7 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <View style={WaitingScreenStyles.button}>
                         <Button
-                            type={room.users.length >= 2 ? "primary" : "disabled"}
+                            // type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
                             onPress={handleStartGame}
                         />

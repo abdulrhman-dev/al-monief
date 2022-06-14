@@ -21,3 +21,39 @@ export function generateLetters(number) {
 
     return chosenLetters
 }
+
+export function combineChecking(userWords) {
+    let wordsObjects = userWords.map(userWord => userWord.words)
+    let baseObject = {
+        "أسم": "",
+        "نبات": "",
+        "حيوان": "",
+        "جماد": "",
+        "بلاد": ""
+    }
+
+    return combineObjects(wordsObjects, baseObject)
+}
+
+export function combineObjects(arrayOfObjects, baseObject) {
+    let resultObject = {}
+
+    Object.keys(baseObject).forEach(key => {
+        resultObject = {
+            ...resultObject,
+            [key]: arrayOfObjects.map(obj => obj[key])
+        }
+    })
+
+    return resultObject
+}
+
+export function lengthOfObjectArrays(obj) {
+    let lengthSum = 0
+
+    Object.keys(obj).forEach(key => {
+        lengthSum += obj[key].length
+    })
+
+    return lengthSum
+}
