@@ -37,7 +37,9 @@ io.on("connection", socket => {
         let roomData = {
             id,
             users: [socket.user],
-            leader: socket.user
+            leader: socket.user,
+            game: {},
+            userWords: []
         }
 
         rooms.push(roomData)
@@ -84,6 +86,28 @@ io.on("connection", socket => {
         io.sockets.to(roomId).emit("emit-start-game", game)
 
         callback()
+    })
+
+    socket.on("submit-game", ({ roomId, roundWords }, callback) => {
+        const match = rooms.findIndex(room => room.id === roomId)
+
+        if (!rooms[match].game.isCountdown) {
+            rooms[match].game.isCountdown = true
+            socket.broadcast.to(roomId).emit("start-countdown")
+        }
+
+        rooms[match] = {
+            ...rooms[match],
+            userWords: [...rooms[match].userWords, roundWords]
+        }
+
+        if (rooms[match].userWords.length === rooms[match].users.length) {
+            console.log("gotcha bruh")
+            socket.to(rooms[match].leader.id).emit("leaderboard-submit", rooms[match].userWords);
+        }
+
+        callback()
+
     })
 
     socket.on("leave-room", id => {

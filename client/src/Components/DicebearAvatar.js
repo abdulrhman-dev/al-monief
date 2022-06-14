@@ -6,7 +6,6 @@ import { SvgCss } from 'react-native-svg';
 
 
 export default function DicebearAvatar({ storeXML, seed }) {
-    console.log(seed)
     const xml = createAvatar(style, {
         seed,
         backgroundColor: "#e5e5e5",

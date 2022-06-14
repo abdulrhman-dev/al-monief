@@ -9,19 +9,25 @@ import RoundBar from "./RoundBar"
 import StageBar from "./StageBar"
 import Input from "../../Components/Input"
 import Button from "../../Components/Button"
+import Countdown from "./Countdown"
 import { MaterialIcons } from '@expo/vector-icons';
 // data
 import items from "./stageBarItems"
 // Utilities
 import { useGame, useStoreGame } from "../../../Providers/GameProvider"
+import { useRoom } from "../../../Providers/RoomProvider"
+import { useUser } from "../../../Providers/UserProvider"
 import { socket } from "../../Utilities/SocketConnection"
 
 
 const MAX_STAGE_NUMBER = 5
-const MAX_ROUND_NUMBER = 5
+const MAX_ROUND_NUMBER = 1
 
 export default MainGameScreen = ({ navigation }) => {
     const game = useGame()
+    const user = useUser()
+    const room = useRoom()
+
     const setGame = useStoreGame()
 
     const [stage, setStage] = useState(1)
@@ -40,21 +46,26 @@ export default MainGameScreen = ({ navigation }) => {
         navigation.replace("HomeScreen")
     }, [])
 
+    const handleStartCountdown = useCallback(() => {
+        setGame({
+            ...game,
+            isCountdown: true,
+        })
+    }, [])
+
     useEffect(() => {
         socket.on("game-ended", handleOnGameEnd)
+        socket.on("start-countdown", handleStartCountdown)
+
 
         return () => {
             socket.off("game-ended", handleOnGameEnd)
+            socket.off("start-countdown", handleStartCountdown)
         }
     }, [socket])
 
     useEffect(() => {
-        console.log(game)
-    }, [])
-
-    useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
-            // ? you'll only be able to leave in checkpoints only
             if (e.data.action.type !== "GO_BACK") return;
 
             e.preventDefault();
@@ -102,7 +113,10 @@ export default MainGameScreen = ({ navigation }) => {
     }
 
     const handleSubmit = () => {
-        if (round + 1 > MAX_ROUND_NUMBER) return;
+        if (round + 1 > MAX_ROUND_NUMBER) {
+            submitWords()
+            return;
+        }
 
         setGame({
             ...game,
@@ -114,13 +128,27 @@ export default MainGameScreen = ({ navigation }) => {
         setRound(round + 1)
     }
 
+    const handleCountDownFinish = () => {
+        submitWords()
+    }
+
+    const submitWords = () => {
+        socket.emit("submit-game", { roomId: room.id, roundWords: words }, () => {
+            if (user.id === room.leader.id) {
+                return navigation.replace("HomeScreen")
+            }
+
+            return navigation.replace("HomeScreen")
+        })
+    }
+
     return (
         <View style={MainGameScreenStyles.container}>
             <View style={MainGameScreenStyles.header}>
                 <RoundBar round={round} />
                 <StageBar stage={stage} setStage={setStage} finished={finished} />
             </View>
-
+            {game.isCountdown && <Countdown finish={handleCountDownFinish} />}
             <View style={MainGameScreenStyles.mainBody}>
                 <View style={MainGameScreenStyles.mainBodyHeader}>
                     <Text style={MainGameScreenStyles.mainText}>{`أكتب ${items[stage - 1].title} بحرف ال(${LETTER})`}</Text>
@@ -137,8 +165,6 @@ export default MainGameScreen = ({ navigation }) => {
                 </View>
 
                 <View style={MainGameScreenStyles.controlGroup} >
-
-
                     {
                         stage === MAX_STAGE_NUMBER && finished.length === MAX_STAGE_NUMBER
                             ?
@@ -177,8 +203,6 @@ export default MainGameScreen = ({ navigation }) => {
                                 </>
                             )
                     }
-
-
                 </View>
             </View>
 
