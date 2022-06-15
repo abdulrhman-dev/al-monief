@@ -2,7 +2,7 @@ require("dotenv").config()
 
 const app = require("express")()
 const httpServer = require("http").createServer(app)
-const { generateShortId } = require("./lib")
+const { generateAndMatch, pointUsers } = require("./lib")
 
 
 const io = require("socket.io")(httpServer, {
@@ -30,7 +30,7 @@ io.on("connection", socket => {
     })
 
     socket.on("generate-room", callback => {
-        const id = generateAndMatch()
+        const id = generateAndMatch(rooms)
 
         socket.join(id)
 
@@ -108,20 +108,19 @@ io.on("connection", socket => {
         callback()
     })
 
+    socket.on("submit-results", ({ results: checkingResults, roomId }, callback) => {
+        const match = rooms.findIndex(room => room.id === roomId)
+
+
+        let results = pointUsers(rooms[match].userWords, checkingResults)
+        callback(results)
+        socket.broadcast.to(roomId).emit("show-results", results)
+    })
+
     socket.on("leave-room", id => {
         socket.leave(id)
     })
 })
-
-function generateAndMatch() {
-    const id = generateShortId()
-    const match = rooms.find(room => room.id === id)
-
-    if (match) generateAndMatch()
-
-    return id
-}
-
 
 io.of("/").adapter.on("delete-room", roomId => {
     console.log(`Deleted Room: ${roomId}`)

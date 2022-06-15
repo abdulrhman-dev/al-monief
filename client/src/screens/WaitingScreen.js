@@ -31,7 +31,7 @@ export default WaitingScreen = ({ navigation }) => {
     let users = fillEmpty(room.users, USER_LIMIT)
 
     useEffect(() => {
-        let listener = (e) => {
+        let unsubscribe = navigation.addListener('beforeRemove', (e) => {
             if (e.data.action.type !== "GO_BACK") return;
 
             e.preventDefault();
@@ -54,11 +54,11 @@ export default WaitingScreen = ({ navigation }) => {
                 ]
             );
 
-        }
+        })
 
-        navigation.addListener('beforeRemove', listener)
 
-        return () => navigation.removeListener('beforeRemove', listener)
+
+        return unsubscribe
     }, [isDisconnected])
 
 
@@ -112,7 +112,8 @@ export default WaitingScreen = ({ navigation }) => {
         let game = {
             roundWords: [],
             isCountdown: null,
-            roundsLetters: generateLetters(5)
+            roundsLetters: generateLetters(5),
+            results: []
         }
 
 
@@ -153,7 +154,7 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <View style={WaitingScreenStyles.button}>
                         <Button
-                            // type={room.users.length >= 2 ? "primary" : "disabled"}
+                            type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
                             onPress={handleStartGame}
                         />

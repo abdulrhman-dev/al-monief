@@ -21,7 +21,7 @@ import { socket } from "../../Utilities/SocketConnection"
 
 
 const MAX_STAGE_NUMBER = 5
-const MAX_ROUND_NUMBER = 1
+const MAX_ROUND_NUMBER = 5
 
 export default MainGameScreen = ({ navigation }) => {
     const game = useGame()
@@ -49,9 +49,9 @@ export default MainGameScreen = ({ navigation }) => {
     const handleStartCountdown = useCallback(() => {
         setGame({
             ...game,
-            isCountdown: true,
+            isCountdown: true
         })
-    }, [])
+    }, [game])
 
     useEffect(() => {
         socket.on("game-ended", handleOnGameEnd)
@@ -62,7 +62,7 @@ export default MainGameScreen = ({ navigation }) => {
             socket.off("game-ended", handleOnGameEnd)
             socket.off("start-countdown", handleStartCountdown)
         }
-    }, [socket])
+    }, [socket, game])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
@@ -148,7 +148,7 @@ export default MainGameScreen = ({ navigation }) => {
                 <RoundBar round={round} />
                 <StageBar stage={stage} setStage={setStage} finished={finished} />
             </View>
-            {game.isCountdown && <Countdown finish={handleCountDownFinish} />}
+            {game.isCountdown && <Countdown finish={handleCountDownFinish} startingCountdown={15} />}
             <View style={MainGameScreenStyles.mainBody}>
                 <View style={MainGameScreenStyles.mainBodyHeader}>
                     <Text style={MainGameScreenStyles.mainText}>{`أكتب ${items[stage - 1].title} بحرف ال(${LETTER})`}</Text>

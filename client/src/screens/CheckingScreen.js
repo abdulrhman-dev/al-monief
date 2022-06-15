@@ -5,7 +5,7 @@ import Button from "../Components/Button"
 // Utilities
 import { useGame, useStoreGame } from "../../Providers/GameProvider"
 import { useRoom } from "../../Providers/RoomProvider"
-import { combineChecking, lengthOfObjectArrays } from "../Utilities/lib"
+import { combineChecking, lengthOfObjectArrays, registerCount } from "../Utilities/lib"
 import { socket } from "../Utilities/SocketConnection"
 
 export default CheckingScreen = ({ navigation }) => {
@@ -15,11 +15,13 @@ export default CheckingScreen = ({ navigation }) => {
     const setGame = useStoreGame()
     const room = useRoom()
     const words = useMemo(() => {
-        return combineChecking(game.userWords)
-    }, [])
+        return combineChecking(game.userWords, true)
+    }, [game.userWords])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
+            if (e.data.action.type !== "GO_BACK") return;
+
             e.preventDefault();
         })
 
@@ -51,12 +53,15 @@ export default CheckingScreen = ({ navigation }) => {
         let value = [];
         if (results[type]) value = results[type]
 
+        const match = words[type].find(item => item.word === word)
+
         setResults({
             ...results,
             [type]: [
                 ...value,
                 {
                     word,
+                    count: match.count,
                     status: "right"
                 }
             ]
@@ -80,7 +85,6 @@ export default CheckingScreen = ({ navigation }) => {
                 })
                 navigation.replace("LeaderboardScreen")
             })
-
         }
     }
 
@@ -89,14 +93,23 @@ export default CheckingScreen = ({ navigation }) => {
             <Text style={styles.screenText}>تصحيح النتيجة</Text>
 
             <ScrollView>
+
+                {
+                    Object.keys(words).length === 0
+
+                    &&
+
+                    <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>
+                }
+
                 {Object.keys(words).map((key, index) => {
                     return (
                         <View key={index}>
 
                             <Text style={styles.sectionText}>{key}</Text>
-                            {(words[key].map((word, index) => (
+                            {(words[key].map((obj, index) => (
                                 <SwipeableButton
-                                    title={word}
+                                    title={obj.word}
                                     type={key}
                                     onLeft={onLeft}
                                     onRight={onRight}
@@ -132,6 +145,12 @@ const styles = StyleSheet.create({
         fontSize: 30,
         textAlign: "center",
         padding: 25
+    },
+    loadingText: {
+        fontFamily: "NotoKufiArabic-Bold",
+        fontSize: 15,
+        color: "#8A8A8A",
+        textAlign: "center"
     },
     sectionText: {
         fontFamily: "NotoKufiArabic-Bold",
