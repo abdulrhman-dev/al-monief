@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
+    "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
+    "release": "npm run bundle && cd android && gradlew assembleRelease",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
