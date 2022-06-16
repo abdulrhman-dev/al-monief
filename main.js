@@ -14,6 +14,10 @@ const io = require("socket.io")(httpServer, {
 let rooms = []
 const USER_LIMIT = 4
 
+app.get("/", (req, res) => {
+    res.send(`socket.io started on PORT: ${process.env.PORT}`)
+})
+
 io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
 
