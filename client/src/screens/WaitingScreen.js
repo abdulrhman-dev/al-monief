@@ -74,7 +74,6 @@ export default WaitingScreen = ({ navigation }) => {
     }, [room])
 
     const handleUserJoin = useCallback(user => {
-        console.log(room.users.map(user => user.name))
         setRoom({
             ...room,
             users: [...room.users, user]
@@ -103,7 +102,6 @@ export default WaitingScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (isDisconnected) {
-            console.log("Triggerd", isDisconnected)
             navigation.goBack()
         }
     }, [isDisconnected])

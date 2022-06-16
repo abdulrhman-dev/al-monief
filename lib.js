@@ -23,20 +23,23 @@ function pointUsers(userSubmissions, correct) {
 
         let points = 0;
 
-        Object.keys(words).forEach(key => {
-            let match = correct[key].find(item => item.word === words[key])
+        words.forEach(word => {
+            Object.keys(word).forEach(key => {
+                let match = correct[key].find(item => item.word === word[key])
 
-            if (match.status === "wrong") return points -= 5
-            if (match.count > 1 && match.status === "right") return points += 5
-            if (match.count === 1 && match.status === "right") return points += 10
+                if (match.status === "wrong") return points -= 5
+                if (match.count > 1 && match.status === "right") return points += 5
+                if (match.count === 1 && match.status === "right") return points += 10
+            })
         })
+
 
         if (index === 0) points = points + (points * 0.05)
 
         results.push({ user, points })
     })
 
-    return results.sort((a, b) => b - a)
+    return results.sort((a, b) => b.points - a.points)
 }
 
 module.exports = {

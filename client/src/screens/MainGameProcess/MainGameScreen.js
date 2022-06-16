@@ -31,6 +31,7 @@ export default MainGameScreen = ({ navigation }) => {
     const setGame = useStoreGame()
 
     const [stage, setStage] = useState(1)
+
     const [words, setWords] = useState({})
     const [finished, setFinished] = useState([])
     const [round, setRound] = useState(1)
@@ -42,7 +43,6 @@ export default MainGameScreen = ({ navigation }) => {
             isCountdown: null,
             roundsLetters: []
         })
-        console.log("Game Ended")
         navigation.replace("HomeScreen")
     }, [])
 
@@ -52,6 +52,10 @@ export default MainGameScreen = ({ navigation }) => {
             isCountdown: true
         })
     }, [game])
+
+    useEffect(() => {
+
+    }, [words])
 
     useEffect(() => {
         socket.on("game-ended", handleOnGameEnd)
@@ -133,7 +137,13 @@ export default MainGameScreen = ({ navigation }) => {
     }
 
     const submitWords = () => {
-        socket.emit("submit-game", { roomId: room.id, roundWords: words }, () => {
+        let wordsArray = [words];
+
+        if (game.roundWords.length > 0) {
+            wordsArray = [...game.roundWords, words]
+        }
+
+        socket.emit("submit-game", { roomId: room.id, roundWords: wordsArray }, () => {
             if (user.id === room.leader.id) {
                 return navigation.replace("CheckingScreen")
             }

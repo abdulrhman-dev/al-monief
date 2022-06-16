@@ -55,7 +55,6 @@ export default QrScannerScreen = ({ navigation }) => {
         socket.emit("join-room", qrCode, (err, room) => {
             if (err) return setErrorText(err.msg)
             setRoom(room)
-            console.log(room.users.map(user => user.name))
             setErrorText("")
             navigation.navigate("WaitingScreen")
         })

@@ -22,52 +22,66 @@ export function generateLetters(number) {
     return chosenLetters
 }
 
-export function combineChecking(userWords, uniqueOutput) {
+export function combineChecking(userWords) {
+
     if (!userWords) return {}
 
-    let wordsObjects = userWords.map(userWord => userWord.words)
+    let words = userWords.map(userWord => userWord.words)
     let baseObject = {
-        "أسم": "",
-        "نبات": "",
-        "حيوان": "",
-        "جماد": "",
-        "بلاد": ""
+        "أسم": [],
+        "نبات": [],
+        "حيوان": [],
+        "جماد": [],
+        "بلاد": []
     }
 
-    return combineObjects(wordsObjects, baseObject, uniqueOutput)
+    return combineObjects(words, baseObject)
 }
 
-export function combineObjects(arrayOfObjects, baseObject, uniqueOutput) {
-    let resultObject = {}
+export function combineObjects(arrayOfObjects, baseObject) {
 
-    Object.keys(baseObject).forEach(key => {
-        let keysArray = []
 
-        arrayOfObjects.forEach(obj => {
-            let word = obj[key]
-            if (word) keysArray.push(word)
+    let obj = arrayOfObjects.reduce((mAcc, mCurr) => {
+        let startingObject;
+
+        if (!mAcc) startingObject = baseObject
+        else startingObject = mAcc
+
+        let returnObject = mCurr.reduce((acc, curr) => {
+            let chunkReturnObject = {}
+
+            Object.keys(acc).forEach(key => {
+                console.log(curr[key], "KEY")
+                if (!curr[key]) return chunkReturnObject[key] = [...acc[key]];
+                chunkReturnObject[key] = [...acc[key], curr[key]]
+            })
+
+            return chunkReturnObject
+        }, startingObject)
+
+
+
+        return returnObject
+    }, null)
+
+
+    Object.keys(obj).forEach(key => {
+        let array = obj[key]
+        let uniqueArray = removeWordsDuplicate(array)
+
+        let counts = countDuplicate(array)
+
+        obj[key] = uniqueArray.map(item => {
+            console.log(item, "ITEM")
+
+            return (({
+                word: item,
+                count: counts[item]
+            }))
         })
-
-
-        let counts = countDuplicate(keysArray)
-
-        if (uniqueOutput) keysArray = removeWordsDuplicate(keysArray)
-
-        keysArray = keysArray.map(word => {
-
-
-            return { word, count: counts[word] }
-        })
-
-
-
-        resultObject = {
-            ...resultObject,
-            [key]: keysArray
-        }
     })
 
-    return resultObject
+    return obj
 }
 
 export function lengthOfObjectArrays(obj) {
@@ -96,7 +110,6 @@ export function countDuplicate(array) {
 }
 
 export function removeWordsDuplicate(array) {
-    console.log(array)
     let uniqueArray = array.filter((item, index) => {
         return array.indexOf(item) === index;
     });

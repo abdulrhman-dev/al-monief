@@ -1,21 +1,22 @@
-import React, { useMemo, useState, useEffect } from "react"
+import React, { useMemo, useEffect, useRef } from "react"
 import { ScrollView, View, Text, StyleSheet } from "react-native"
 // Componenets
 import Button from "../Components/Button"
 // Utilities
 import { useGame, useStoreGame } from "../../Providers/GameProvider"
 import { useRoom } from "../../Providers/RoomProvider"
-import { combineChecking, lengthOfObjectArrays, registerCount } from "../Utilities/lib"
+import { combineChecking, lengthOfObjectArrays } from "../Utilities/lib"
 import { socket } from "../Utilities/SocketConnection"
 
 export default CheckingScreen = ({ navigation }) => {
-    const [results, setResults] = useState({})
-    const [isDisabled, setIsDisabled] = useState(false)
+    const results = useRef({})
     const game = useGame()
     const setGame = useStoreGame()
     const room = useRoom()
     const words = useMemo(() => {
-        return combineChecking(game.userWords, true)
+        let tt = combineChecking(game.userWords);
+        console.log(tt)
+        return tt
     }, [game.userWords])
 
     useEffect(() => {
@@ -28,16 +29,18 @@ export default CheckingScreen = ({ navigation }) => {
         return unsubscribe
     }, [navigation])
 
-    useEffect(() => {
-        setIsDisabled(lengthOfObjectArrays(results) === lengthOfObjectArrays(words))
-    }, [words, results])
-
     const onLeft = (word, type) => {
-        let value = [];
-        if (results[type]) value = results[type]
+        if (results.current[type]) {
+            const exist = results.current[type].find(item => item.word === word)
 
-        setResults({
-            ...results,
+            if (exist) return;
+        }
+
+        let value = [];
+        if (results.current[type]) value = results.current[type]
+
+        results.current = ({
+            ...results.current,
             [type]: [
                 ...value,
                 {
@@ -50,13 +53,23 @@ export default CheckingScreen = ({ navigation }) => {
     }
 
     const onRight = (word, type) => {
+        console.log(lengthOfObjectArrays(results.current))
+
+
         let value = [];
-        if (results[type]) value = results[type]
+        if (results.current[type]) value = results.current[type]
 
         const match = words[type].find(item => item.word === word)
 
-        setResults({
-            ...results,
+        if (results.current[type]) {
+            const exist = results.current[type].find(item => item.word === word)
+
+            if (exist) return;
+        }
+
+
+        results.current = ({
+            ...results.current,
             [type]: [
                 ...value,
                 {
@@ -69,16 +82,19 @@ export default CheckingScreen = ({ navigation }) => {
     }
 
     const reset = (word, type) => {
-        if (!results[type]) return;
-        setResults({
-            ...results,
-            [type]: results[type].filter(result => result.word !== word)
+
+        if (!results.current[type]) return;
+
+
+        results.current = ({
+            ...results.current,
+            [type]: results.current[type].filter(result => result.word !== word)
         })
     }
 
     const handleSubmitResults = () => {
-        if (lengthOfObjectArrays(results) === lengthOfObjectArrays(words)) {
-            socket.emit("submit-results", { results, roomId: room.id }, results => {
+        if (lengthOfObjectArrays(results.current) === lengthOfObjectArrays(words)) {
+            socket.emit("submit-results", { results: results.current, roomId: room.id }, results => {
                 setGame({
                     ...game,
                     results
@@ -86,6 +102,7 @@ export default CheckingScreen = ({ navigation }) => {
                 navigation.replace("LeaderboardScreen")
             })
         }
+
     }
 
     return (
@@ -97,37 +114,36 @@ export default CheckingScreen = ({ navigation }) => {
                 {
                     Object.keys(words).length === 0
 
-                    &&
+                        ?
 
-                    <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>
+                        <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>
+                        :
+                        Object.keys(words).map((key, index) => (
+                            <View key={index}>
+                                <Text style={styles.sectionText}>{key}</Text>
+                                {(words[key].map((obj, index) => (
+                                    <SwipeableButton
+                                        title={obj.word}
+                                        type={key}
+                                        onLeft={onLeft}
+                                        onRight={onRight}
+                                        reset={reset}
+                                        key={index}
+                                    />
+                                )))}
+                            </View>
+                        ))
                 }
 
-                {Object.keys(words).map((key, index) => {
-                    return (
-                        <View key={index}>
 
-                            <Text style={styles.sectionText}>{key}</Text>
-                            {(words[key].map((obj, index) => (
-                                <SwipeableButton
-                                    title={obj.word}
-                                    type={key}
-                                    onLeft={onLeft}
-                                    onRight={onRight}
-                                    reset={reset}
-                                    key={index}
-                                />
-                            )))}
-                        </View>
-                    )
-                })}
             </ScrollView>
             <View style={styles.buttonContainer}>
                 <Button
-                    type={
-                        !isDisabled
-                            ? "disabled"
-                            : "primary"
-                    }
+                    // type={
+                    //     lengthOfObjectArrays(results.current) === lengthOfObjectArrays(words)
+                    //         ? "primary"
+                    //         : "disabled"
+                    // }
                     title={"تسليم النتيجة"}
                     onPress={handleSubmitResults}
                 />

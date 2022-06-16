@@ -1,10 +1,14 @@
 {
   "expo": {
-    "name": "client",
+    "name": "المنيف",
     "slug": "client",
     "version": "1.0.0",
+    "icon": "./assets/main-icon.png",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "com.al_monief.game"
+    }
   }
 }
