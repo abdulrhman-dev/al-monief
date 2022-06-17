@@ -38,10 +38,13 @@ export default CreateUserScreen = () => {
                 <Text style={CreateUserStyle.screenText}>أنشاء حساب جديد</Text>
             </View>
             <View style={CreateUserStyle.body}>
-                <View style={CreateUserStyle.secionView}>
+                <View style={CreateUserStyle.avatarView}>
                     <DicebearAvatar
                         seed={uniqueNumber + username}
-                        storeXML={xml => storeAvatar(xml)}
+                        storeXML={xml => {
+                            console.log("CHANGED")
+                            storeAvatar(xml)
+                        }}
                     />
                 </View>
                 <View style={CreateUserStyle.secionView}>
@@ -70,19 +73,22 @@ const CreateUserStyle = StyleSheet.create({
     screenText: {
         fontFamily: "NotoKufiArabic-ExtraBold",
         color: "white",
-        fontSize: 30
+        fontSize: 25
     },
     header: {
-        flex: 1.8,
+        flex: 1.2,
         backgroundColor: "#323440",
         justifyContent: "center",
         alignItems: "center"
-
     },
     body: {
-        flex: 4.2,
+        flex: 4.8,
         justifyContent: "center",
         alignItems: "center"
+    },
+    avatarView: {
+        flex: 3,
+        justifyContent: "flex-end"
     },
     secionView: {
         justifyContent: "center",

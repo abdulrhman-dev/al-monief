@@ -13,6 +13,7 @@ import { useUser } from "../../Providers/UserProvider"
 import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities 
 import { socket } from "../Utilities/SocketConnection"
+import { moderateScale, scale } from "react-native-size-matters"
 
 
 export default HomeScreen = ({ navigation }) => {
@@ -42,13 +43,13 @@ export default HomeScreen = ({ navigation }) => {
         <View style={HomeScreenStyles.screenView}>
             <View style={HomeScreenStyles.logo}>
                 <MainLogo
-                    height={150}
-                    width={150}
+                    height={moderateScale(150, -0.5)}
+                    width={moderateScale(150, -0.5)}
                 />
             </View>
             <View style={HomeScreenStyles.body}>
                 <View style={HomeScreenStyles.profile}>
-                    <Avatar xml={user.avatarXML} width="120" height="120" />
+                    <Avatar xml={user.avatarXML} width={moderateScale(135, -1.5)} height={moderateScale(135, -1.5)} />
                     <Text style={HomeScreenStyles.username}>{user.name}</Text>
                 </View>
                 <View style={HomeScreenStyles.actionSection}>

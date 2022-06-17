@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import {
     View,
     Text,
+    Keyboard,
     StyleSheet
 } from "react-native"
 // Components 
@@ -18,6 +19,7 @@ import { useGame, useStoreGame } from "../../../Providers/GameProvider"
 import { useRoom } from "../../../Providers/RoomProvider"
 import { useUser } from "../../../Providers/UserProvider"
 import { socket } from "../../Utilities/SocketConnection"
+import { moderateScale } from "react-native-size-matters"
 
 
 const MAX_STAGE_NUMBER = 5
@@ -31,11 +33,11 @@ export default MainGameScreen = ({ navigation }) => {
     const setGame = useStoreGame()
 
     const [stage, setStage] = useState(1)
-
     const [words, setWords] = useState({})
     const [finished, setFinished] = useState([])
     const [round, setRound] = useState(1)
     const [submitLoading, setSubmitLoading] = useState(false)
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     const LETTER = game.roundsLetters[round - 1]
 
@@ -69,6 +71,26 @@ export default MainGameScreen = ({ navigation }) => {
             socket.off("start-countdown", handleStartCountdown)
         }
     }, [socket, game])
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => {
+                setKeyboardVisible(true);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => {
+                setKeyboardVisible(false);
+            }
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
@@ -165,7 +187,7 @@ export default MainGameScreen = ({ navigation }) => {
                 <StageBar stage={stage} setStage={setStage} finished={finished} />
             </View>
             {game.isCountdown && <Countdown finish={handleCountDownFinish} startingCountdown={15} />}
-            <View style={MainGameScreenStyles.mainBody}>
+            <View style={isKeyboardVisible ? [MainGameScreenStyles.mainBody, { flex: 1.1 }] : MainGameScreenStyles.mainBody}>
                 <View style={MainGameScreenStyles.mainBodyHeader}>
                     <Text style={MainGameScreenStyles.mainText}>{`أكتب ${items[stage - 1].title} بحرف ال(${LETTER})`}</Text>
 
@@ -182,7 +204,9 @@ export default MainGameScreen = ({ navigation }) => {
 
                 <View style={MainGameScreenStyles.controlGroup} >
                     {
-                        stage === MAX_STAGE_NUMBER && finished.length === MAX_STAGE_NUMBER
+                        !isKeyboardVisible
+                            &&
+                            stage === MAX_STAGE_NUMBER && finished.length === MAX_STAGE_NUMBER
                             ?
                             <Button
                                 onPress={handleSubmit}
@@ -193,6 +217,8 @@ export default MainGameScreen = ({ navigation }) => {
                                 <MaterialIcons name="check" size={28} color="white" />
                             </Button>
                             :
+                            !isKeyboardVisible
+                            &&
                             (
                                 <>
                                     <Button
@@ -235,10 +261,10 @@ const MainGameScreenStyles = StyleSheet.create({
         backgroundColor: "white"
     },
     header: {
-        flex: 1,
+        flex: 1
     },
     mainBody: {
-        flex: 5,
+        flex: 4,
         height: "100%"
     },
     mainBodyHeader: {
@@ -249,7 +275,7 @@ const MainGameScreenStyles = StyleSheet.create({
     },
     controlGroup: {
         width: "100%",
-        flex: 0.5,
+        flex: 1,
         padding: 20,
         flexDirection: "row",
         justifyContent: "space-around",
@@ -257,7 +283,7 @@ const MainGameScreenStyles = StyleSheet.create({
     },
     mainText: {
         fontFamily: "NotoKufiArabic-ExtraBold",
-        fontSize: 25,
-        marginBottom: 65
+        fontSize: moderateScale(25, -1.2),
+        marginBottom: 10
     }
 })

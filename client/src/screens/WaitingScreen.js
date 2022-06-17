@@ -8,9 +8,10 @@ import {
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
 import { fillEmpty, generateLetters } from "../Utilities/lib"
+import { moderateScale, scale } from "react-native-size-matters"
 // Context
 import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
-import { useStoreGame, useGame } from "../../Providers/GameProvider"
+import { useStoreGame } from "../../Providers/GameProvider"
 import { useUser } from "../../Providers/UserProvider"
 // Components
 import QRCode from "react-native-qrcode-svg";
@@ -135,7 +136,7 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <QRCode
                         value={room.id}
-                        size={200}
+                        size={moderateScale(200, -0.85)}
                     />
                 </View>
 
@@ -178,11 +179,11 @@ function AvailableUser({ user, leader, border }) {
                 &&
 
                 <View style={AvatarBarStyles.leaderIcon} >
-                    <MaterialCommunityIcons name="crown" size={28} color="#FFD700" />
+                    <MaterialCommunityIcons name="crown" size={moderateScale(28, -1)} color="#FFD700" />
                 </View>
             }
 
-            <Avatar xml={user.avatarXML} width="70" height="70" />
+            <Avatar xml={user.avatarXML} width={moderateScale(70, -0.9)} height={moderateScale(70, -0.9)} />
             <View style={AvatarBarStyles.textContainer}>
                 <Text
                     numberOfLines={1}
@@ -208,8 +209,8 @@ const AvatarBarStyles = StyleSheet.create({
     },
     unavailableUser: {
         position: "relative",
-        width: 70,
-        height: 70,
+        width: moderateScale(70, -0.9),
+        height: moderateScale(70, -0.9),
         backgroundColor: "#f0f0f0",
         borderRadius: 50,
         justifyContent: "center",

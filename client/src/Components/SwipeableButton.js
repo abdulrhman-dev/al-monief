@@ -5,6 +5,7 @@ import {
     StyleSheet
 } from "react-native"
 import { Swipeable } from "react-native-gesture-handler"
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default SwipeableButton = ({ title, type, reset, onLeft, onRight }) => {
 
@@ -17,7 +18,9 @@ export default SwipeableButton = ({ title, type, reset, onLeft, onRight }) => {
             onSwipeableLeftOpen={() => onLeft(title, type)}
         >
             <View style={styles.container}>
+                <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
                 <Text style={styles.titleText}>{title}</Text>
+                <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
             </View>
         </Swipeable>
     )
@@ -46,8 +49,10 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "white",
         height: 50,
-        justifyContent: "center",
-        alignItems: "center"
+        justifyContent: "space-between",
+        paddingHorizontal: 5,
+        alignItems: "center",
+        flexDirection: "row"
     },
     titleText: {
         fontFamily: "NotoKufiArabic-Bold",

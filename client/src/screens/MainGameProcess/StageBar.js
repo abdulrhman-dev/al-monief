@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     stagePointContainer: {
-        width: 50,
-        height: 50,
+        width: 45,
+        height: 45,
         borderRadius: 50
     },
     stagePointIcon: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     stageLine: {
         position: "absolute",
         width: "20%",
-        left: 20,
+        left: 50,
         zIndex: -1,
         height: 12,
         backgroundColor: "#e06394"

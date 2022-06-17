@@ -19,7 +19,7 @@ export default RoundBar = ({ round }) => {
 
 const styles = StyleSheet.create({
     roundBarContainer: {
-        height: 20,
+        height: 11.25,
         overflow: "hidden",
         flexDirection: "row",
         justifyContent: "space-between",

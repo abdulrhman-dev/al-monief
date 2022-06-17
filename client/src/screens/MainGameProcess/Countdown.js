@@ -32,14 +32,14 @@ const styles = StyleSheet.create({
         position: "absolute",
         backgroundColor: "grey",
         width: "100%",
-        height: 50,
+        height: 30,
         justifyContent: "center",
         alignItems: "center",
-        top: "72%"
+        top: "81%"
     },
     countdownText: {
         fontFamily: "NotoKufiArabic-Medium",
         color: "white",
-        fontSize: 25
+        fontSize: 15
     }
 })

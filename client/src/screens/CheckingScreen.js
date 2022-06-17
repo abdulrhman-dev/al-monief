@@ -113,7 +113,7 @@ export default CheckingScreen = ({ navigation }) => {
         <View style={styles.checkingScreenContainer}>
             <Text style={styles.screenText}>تصحيح النتيجة</Text>
 
-            <ScrollView>
+            <ScrollView style={styles.scrollView}>
 
                 {
                     Object.keys(words).length === 0
@@ -155,7 +155,7 @@ export default CheckingScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     checkingScreenContainer: {
-        flex: 1,
+        flex: 1
     },
     screenText: {
         fontFamily: "NotoKufiArabic-ExtraBold",
@@ -169,15 +169,16 @@ const styles = StyleSheet.create({
         color: "#8A8A8A",
         textAlign: "center"
     },
+
     sectionText: {
         fontFamily: "NotoKufiArabic-Bold",
-        backgroundColor: "#262626",
+        backgroundColor: "lightgrey",
         color: "white",
         padding: 7
     },
     buttonContainer: {
         justifyContent: "center",
         alignItems: "center",
-        height: "20%"
+        height: "15%"
     }
 })
