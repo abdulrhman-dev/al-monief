@@ -36,7 +36,7 @@ export default UserProvider = (props) => {
 async function getUser(setUser) {
     try {
         // ? Resets User Every time app loads
-        // ? Useful for dev
+        // ? Useful for devs
         // await AsyncStorage.removeItem("user")
         setUser({ loading: true })
 

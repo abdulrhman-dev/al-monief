@@ -11,16 +11,31 @@ import QrScannerScreen from "../Screens/QrScannerScreen";
 import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 import CheckingScreen from "../Screens/CheckingScreen";
 import LeaderboardScreen from "../Screens/LeaderboardScreen";
+// Overlays
+import LoadingOverlay from "../Overlays/LoadingOverlay";
+import NoInternetOverlay from "../Overlays/NoInternetOverlay";
+import ErrorOverlay from "../Overlays/ErrorOverlay";
 // Context Provider
 import { useUser } from "../../Providers/UserProvider"
+import { useConnection } from "../../Providers/ConnectionProvider"
+
 
 const Stack = createNativeStackNavigator();
 
 const ScreenNavigator = () => {
     const user = useUser()
+    const connection = useConnection()
+
+    if (connection.isInternetReachable === false && !connection.reconnected) {
+        return <NoInternetOverlay />
+    }
+
+    if (connection.error) {
+        return <ErrorOverlay />;
+    }
 
     if (user.loading) {
-        return <></>
+        return <LoadingOverlay />
     }
 
     return (

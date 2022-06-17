@@ -2,6 +2,8 @@ import { useContext, createContext, useState, useEffect, useCallback } from "rea
 import { useNetInfo } from "@react-native-community/netinfo";
 // Context Provider
 import { useStoreUser } from "./UserProvider"
+import { useSetRoom } from "./RoomProvider"
+import { useStoreGame } from "./GameProvider"
 // Utilties
 import { socket } from "../src/Utilities/SocketConnection"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -15,37 +17,77 @@ export const useConnection = () => {
 export default ConnectionProvider = ({ children }) => {
     const netInfo = useNetInfo()
     const setUser = useStoreUser()
+    const setRoom = useSetRoom()
+    const setGame = useStoreGame()
 
     const [connection, setConnection] = useState({})
 
     const reconnectListener = useCallback(async () => {
         console.log("socket reconnected...")
+        setUser({ loading: true })
+        configureUser()
+    }, [])
+
+    const giveUserListener = useCallback(async callback => {
+        setUser({ loading: true })
+        configureUser(callback)
+    }, [])
+
+    const configureUser = useCallback(async (callback) => {
         const value = await AsyncStorage.getItem("user")
+
         if (value) {
             socket.emit("configure-user", JSON.parse(value), socketUser => {
                 setUser(socketUser)
+                setConnection({
+                    ...connection,
+                    reconnected: true
+                })
+
+                if (callback) callback()
+            })
+
+        }
+    })
+
+    const errorListener = useCallback(error => {
+        {
+            setConnection({
+                ...connection,
+                error
             })
         }
-    }, [])
-
+    }, [connection])
 
     useEffect(() => {
-        console.log(netInfo.isInternetReachable ? "Connected to the internet" : "Nope my guy can't connect")
+        if (netInfo.isConnected !== null) {
+            let reconnected = null
+            if (netInfo.isInternetReachable === false) {
+                setGame({})
+                setRoom({})
+                reconnected = false
+            }
+
+            setConnection({
+                ...connection,
+                reconnected,
+                isInternetReachable: netInfo.isInternetReachable
+            })
+        }
     }, [netInfo])
 
     useEffect(() => {
         socket.io.on("reconnect", reconnectListener)
+        socket.io.on("error", errorListener);
+        socket.on("give-user", giveUserListener)
 
-        socket.io.on("reconnect_error", (error) => {
-            console.log(error)
-        });
-        socket.io.on("error", (error) => {
-            console.log(error)
-        });
+
         return () => {
             socket.io.off("reconnect", reconnectListener)
+            socket.io.off("error", errorListener)
+            socket.off("give-user", giveUserListener)
         }
-    }, [socket])
+    }, [socket, connection])
 
     return (
         <ConnectionContext.Provider value={connection}>

@@ -21,7 +21,7 @@ export default JoinScreen = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
-            if (joinLoading) setJoinLoading(false)
+            setJoinLoading(false)
         });
 
         return unsubscribe

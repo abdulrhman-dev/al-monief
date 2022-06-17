@@ -22,7 +22,10 @@ io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
 
     socket.on("configure-user", (user, callback) => {
-        if (socket.user) return
+        if (socket.user) {
+            callback(socket.user)
+            return
+        }
 
         socket.user = {
             ...user,
@@ -31,6 +34,18 @@ io.on("connection", socket => {
 
         callback(socket.user)
         console.log(`------------->Saved ${user.name} for socket: ${socket.id}.`)
+    })
+
+    socket.use(([event], next) => {
+        if (event === "configure-user") return next()
+
+        if (!socket.user) {
+            socket.emit("give-user", () => {
+                next()
+            })
+        }
+
+        next()
     })
 
     socket.on("generate-room", callback => {

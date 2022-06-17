@@ -24,7 +24,12 @@ export default QrScannerScreen = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
-            if (joinLoading) setJoinLoading(false)
+            setHasPermission(null)
+            setScanned(false)
+            setErrorText("")
+            setQrCode("")
+            askForCameraPermission()
+            setJoinLoading(false)
         });
 
         return unsubscribe
@@ -109,6 +114,7 @@ export default QrScannerScreen = ({ navigation }) => {
             <Text style={QrScannerScreenStyles.errorText}>{errorText}</Text>
             <Button
                 title={`${qrCode} ادخل الغرفة`}
+                loading={joinLoading}
                 type={!scanned ? "disabled" : "primary"}
                 onPress={handleJoinRoom}
             />
