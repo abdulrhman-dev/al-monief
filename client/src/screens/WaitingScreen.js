@@ -22,6 +22,7 @@ let USER_LIMIT = 4;
 
 export default WaitingScreen = ({ navigation }) => {
     const [isDisconnected, setDisconnected] = useState(false)
+    const [startRoomLoading, setStartRoomLoading] = useState(false)
     const room = useRoom()
     const user = useUser()
     const setRoom = useSetRoom()
@@ -55,8 +56,6 @@ export default WaitingScreen = ({ navigation }) => {
             );
 
         })
-
-
 
         return unsubscribe
     }, [isDisconnected])
@@ -107,6 +106,10 @@ export default WaitingScreen = ({ navigation }) => {
     }, [isDisconnected])
 
     const handleStartGame = () => {
+        if (startRoomLoading) return;
+
+        setStartRoomLoading(true)
+
         let game = {
             roundWords: [],
             isCountdown: null,
@@ -116,16 +119,15 @@ export default WaitingScreen = ({ navigation }) => {
 
 
         socket.emit("start-game", { roomId: room.id, game }, () => {
-            navigation.replace("MainGameScreen")
             setGame(game)
-
+            navigation.replace("MainGameScreen")
         })
     }
 
     return (
         <View style={WaitingScreenStyles.container}>
             <View style={WaitingScreenStyles.header}>
-                <Text style={WaitingScreenStyles.titleText}>أدع أصدقائك للدوخل!</Text>
+                <Text style={WaitingScreenStyles.titleText}>أدع أصدقائك للدخول!</Text>
             </View>
             <View style={WaitingScreenStyles.body}>
                 <View style={WaitingScreenStyles.mainbodyContent}>
@@ -154,6 +156,7 @@ export default WaitingScreen = ({ navigation }) => {
                         <Button
                             type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
+                            loading={startRoomLoading}
                             onPress={handleStartGame}
                         />
                     </View>

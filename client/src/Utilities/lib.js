@@ -51,7 +51,6 @@ export function combineObjects(arrayOfObjects, baseObject) {
             let chunkReturnObject = {}
 
             Object.keys(acc).forEach(key => {
-                console.log(curr[key], "KEY")
                 if (!curr[key]) return chunkReturnObject[key] = [...acc[key]];
                 chunkReturnObject[key] = [...acc[key], curr[key]]
             })
@@ -72,7 +71,6 @@ export function combineObjects(arrayOfObjects, baseObject) {
         let counts = countDuplicate(array)
 
         obj[key] = uniqueArray.map(item => {
-            console.log(item, "ITEM")
 
             return (({
                 word: item,

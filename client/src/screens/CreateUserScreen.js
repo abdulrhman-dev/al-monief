@@ -14,6 +14,7 @@ import DicebearAvatar from "../Components/DicebearAvatar"
 const uniqueNumber = String(Math.floor((Math.random() * 5000)))
 
 export default CreateUserScreen = () => {
+    const [userLoading, setUserLoading] = useState(false)
     const [username, changeUsername] = useState("")
     const [avatar, storeAvatar] = useState()
     const storeUser = useStoreUser()
@@ -21,6 +22,9 @@ export default CreateUserScreen = () => {
 
     function handleSubmit() {
         if (!username) return;
+        if (userLoading) return;
+
+        setUserLoading(true)
 
         storeUser({
             name: username,
@@ -49,6 +53,7 @@ export default CreateUserScreen = () => {
                     <Button
                         onPress={handleSubmit}
                         title={"أنشاء الحساب"}
+                        loading={userLoading}
                     />
                 </View>
             </View>

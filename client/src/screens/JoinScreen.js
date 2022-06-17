@@ -11,27 +11,33 @@ import Button from "../Components/Button"
 import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
-import { useDebounce } from '../Utilities/hooks'
 
 
 export default JoinScreen = ({ navigation }) => {
     const setRoom = useSetRoom()
     const [roomId, setRoomId] = useState()
-    const [loading, setLoading] = useState()
+    const [joinLoading, setJoinLoading] = useState(false)
     const [errorText, setErrorText] = useState("")
-    const { debounce } = useDebounce()
 
     useEffect(() => {
-        setLoading(false)
-    }, [])
+        const unsubscribe = navigation.addListener("focus", () => {
+            if (joinLoading) setJoinLoading(false)
+        });
+
+        return unsubscribe
+    }, [navigation])
+
 
     function joinRoom() {
-        setLoading(true)
+        if (joinLoading) return;
+        setJoinLoading(true)
 
         socket.emit("join-room", roomId, (err, room) => {
-            setLoading(false)
+            if (err) {
+                setJoinLoading(false)
+                return setErrorText(err.msg)
+            }
 
-            if (err) return setErrorText(err.msg)
             setRoom(room)
             setErrorText("")
             navigation.navigate("WaitingScreen")
@@ -51,7 +57,7 @@ export default JoinScreen = ({ navigation }) => {
                     value={roomId}
                     placeholder={"اكتب كود الغرفة"}
                 />
-                <Button type={loading ? "disabled" : "primary"} title={"أدخل إلى الغرفة بأستخدام الكود"} onPress={() => debounce(joinRoom)} />
+                <Button loading={joinLoading} title={"أدخل إلى الغرفة بأستخدام الكود"} onPress={joinRoom} />
             </View>
 
             <Button title={"أدخل إلى الغرفة بأستخدام QR Code"} onPress={() => navigation.navigate("QrScannerScreen")} />

@@ -35,7 +35,8 @@
     "socket.io-client": "^4.5.1",
     "webpack-dev-server": "^4.9.1",
     "react-native-gesture-handler": "~2.2.1",
-    "expo-updates": "~0.13.2"
+    "expo-updates": "~0.13.2",
+    "@react-native-community/netinfo": "8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -10,7 +10,6 @@ import Button from "../Components/Button"
 // Utilities
 import { useSetRoom } from "../../Providers/RoomProvider"
 import { socket } from "../Utilities/SocketConnection"
-import { useDebounce } from "../Utilities/hooks"
 
 
 // original code for more info: https://www.youtube.com/watch?v=LtbuOgoQJAg
@@ -21,8 +20,15 @@ export default QrScannerScreen = ({ navigation }) => {
     const [scanned, setScanned] = useState(false)
     const [qrCode, setQrCode] = useState("")
     const [errorText, setErrorText] = useState("")
-    const { debounce } = useDebounce()
+    const [joinLoading, setJoinLoading] = useState(false)
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            if (joinLoading) setJoinLoading(false)
+        });
+
+        return unsubscribe
+    }, [navigation])
 
     const askForCameraPermission = () => {
         (async () => {
@@ -48,12 +54,18 @@ export default QrScannerScreen = ({ navigation }) => {
     }
 
     const handleJoinRoom = () => {
+        if (joinLoading) return;
+
+        setJoinLoading(true)
         setScanned(false)
         setErrorText("")
         setQrCode("")
 
         socket.emit("join-room", qrCode, (err, room) => {
-            if (err) return setErrorText(err.msg)
+            if (err) {
+                setJoinLoading(false)
+                return setErrorText(err.msg)
+            }
             setRoom(room)
             setErrorText("")
             navigation.navigate("WaitingScreen")
@@ -98,7 +110,7 @@ export default QrScannerScreen = ({ navigation }) => {
             <Button
                 title={`${qrCode} ادخل الغرفة`}
                 type={!scanned ? "disabled" : "primary"}
-                onPress={() => debounce(handleJoinRoom)}
+                onPress={handleJoinRoom}
             />
             {
                 scanned ?

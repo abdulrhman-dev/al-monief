@@ -2,15 +2,17 @@ import React, { useEffect } from "react"
 import {
     Text,
     Pressable,
-    StyleSheet
+    StyleSheet,
+    ActivityIndicator
 } from "react-native"
 
-export default Button = ({ onPress, title, type, style = {}, children }) => {
+export default Button = ({ onPress, title, type, style = {}, loading = false, children }) => {
 
     // Disabled Logic
     onPress = type === "disabled" ? null : onPress
 
     function getButtonStyle() {
+        if (loading) return [styles.button, styles.disabled]
         if (!type) return styles.button
 
         return {
@@ -30,8 +32,11 @@ export default Button = ({ onPress, title, type, style = {}, children }) => {
 
     return (
         <Pressable style={[getButtonStyle(), style]} onPress={onPress}>
-            {title && <Text style={getTextStyle()}>{title}</Text>}
-            {children}
+            {
+                loading
+                    ? <ActivityIndicator size={28} color="white" />
+                    : ((title ? <Text style={getTextStyle()}>{title}</Text> : children))
+            }
         </Pressable>
     )
 }
@@ -51,7 +56,7 @@ const styles = StyleSheet.create({
         color: "white"
     },
     disabled: {
-        opacity: 0.5
+        backgroundColor: "#e9aac3"
     },
     primary: {
         backgroundColor: "#e06394"

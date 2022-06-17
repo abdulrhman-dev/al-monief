@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useState, useCallback, useEffect } from "react"
 import {
     View,
     Text,
@@ -13,15 +13,25 @@ import { useUser } from "../../Providers/UserProvider"
 import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities 
 import { socket } from "../Utilities/SocketConnection"
-import SwipeableButton from "../Components/SwipeableButton"
-
 
 
 export default HomeScreen = ({ navigation }) => {
+    const [createRoomLoading, setCreateRoomLoaidng] = useState(false)
     const user = useUser()
     const setRoomData = useSetRoom()
 
-    function createRomm() {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            setCreateRoomLoaidng(false)
+        });
+
+        return unsubscribe
+    }, [navigation])
+
+    const createRomm = () => {
+        if (createRoomLoading) return;
+        setCreateRoomLoaidng(true)
+
         socket.emit("generate-room", room => {
             setRoomData(room)
             navigation.navigate("WaitingScreen")
@@ -42,9 +52,8 @@ export default HomeScreen = ({ navigation }) => {
                     <Text style={HomeScreenStyles.username}>{user.name}</Text>
                 </View>
                 <View style={HomeScreenStyles.actionSection}>
-                    <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} />
+                    <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} loading={createRoomLoading} />
                     <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinScreen")} />
-
                 </View>
             </View>
         </View>

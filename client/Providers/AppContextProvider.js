@@ -19,11 +19,14 @@ const combineComponents = (...components) => {
 import RoomProvider from './RoomProvider';
 import UserProvider from './UserProvider';
 import GameProvider from './GameProvider';
+import ConnectionProvider from './ConnectionProvider';
+
 
 const providers = [
     RoomProvider,
     UserProvider,
-    GameProvider
+    GameProvider,
+    ConnectionProvider
 ]
 
 export default AppContextProvider = combineComponents(...providers)

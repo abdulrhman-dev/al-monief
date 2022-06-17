@@ -1,7 +1,8 @@
-import React, { useMemo, useEffect, useRef } from "react"
+import React, { useMemo, useState, useEffect, useRef } from "react"
 import { ScrollView, View, Text, StyleSheet } from "react-native"
 // Componenets
 import Button from "../Components/Button"
+import SwipeableButton from "../Components/SwipeableButton"
 // Utilities
 import { useGame, useStoreGame } from "../../Providers/GameProvider"
 import { useRoom } from "../../Providers/RoomProvider"
@@ -9,15 +10,13 @@ import { combineChecking, lengthOfObjectArrays } from "../Utilities/lib"
 import { socket } from "../Utilities/SocketConnection"
 
 export default CheckingScreen = ({ navigation }) => {
+    const [submitLoading, setSubmitLoading] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(true)
     const results = useRef({})
     const game = useGame()
     const setGame = useStoreGame()
     const room = useRoom()
-    const words = useMemo(() => {
-        let tt = combineChecking(game.userWords);
-        console.log(tt)
-        return tt
-    }, [game.userWords])
+    const words = useMemo(() => combineChecking(game.userWords), [game.userWords])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
@@ -50,12 +49,12 @@ export default CheckingScreen = ({ navigation }) => {
             ]
 
         })
+
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
     }
 
     const onRight = (word, type) => {
-        console.log(lengthOfObjectArrays(results.current))
-
-
         let value = [];
         if (results.current[type]) value = results.current[type]
 
@@ -79,6 +78,9 @@ export default CheckingScreen = ({ navigation }) => {
                 }
             ]
         })
+
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
     }
 
     const reset = (word, type) => {
@@ -93,16 +95,18 @@ export default CheckingScreen = ({ navigation }) => {
     }
 
     const handleSubmitResults = () => {
-        if (lengthOfObjectArrays(results.current) === lengthOfObjectArrays(words)) {
-            socket.emit("submit-results", { results: results.current, roomId: room.id }, results => {
-                setGame({
-                    ...game,
-                    results
-                })
-                navigation.replace("LeaderboardScreen")
-            })
-        }
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return;
+        if (submitLoading) return;
 
+        setSubmitLoading(true)
+
+        socket.emit("submit-results", { results: results.current, roomId: room.id }, results => {
+            setGame({
+                ...game,
+                results
+            })
+            navigation.replace("LeaderboardScreen")
+        })
     }
 
     return (
@@ -139,12 +143,9 @@ export default CheckingScreen = ({ navigation }) => {
             </ScrollView>
             <View style={styles.buttonContainer}>
                 <Button
-                    // type={
-                    //     lengthOfObjectArrays(results.current) === lengthOfObjectArrays(words)
-                    //         ? "primary"
-                    //         : "disabled"
-                    // }
                     title={"تسليم النتيجة"}
+                    type={isDisabled ? "disabled" : "primary"}
+                    loading={submitLoading}
                     onPress={handleSubmitResults}
                 />
             </View>

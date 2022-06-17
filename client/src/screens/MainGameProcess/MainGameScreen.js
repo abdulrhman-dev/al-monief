@@ -35,6 +35,8 @@ export default MainGameScreen = ({ navigation }) => {
     const [words, setWords] = useState({})
     const [finished, setFinished] = useState([])
     const [round, setRound] = useState(1)
+    const [submitLoading, setSubmitLoading] = useState(false)
+
     const LETTER = game.roundsLetters[round - 1]
 
     const handleOnGameEnd = useCallback(() => {
@@ -137,6 +139,10 @@ export default MainGameScreen = ({ navigation }) => {
     }
 
     const submitWords = () => {
+        if (submitLoading) return;
+
+        setSubmitLoading(true)
+
         let wordsArray = [words];
 
         if (game.roundWords.length > 0) {
@@ -182,6 +188,7 @@ export default MainGameScreen = ({ navigation }) => {
                                 onPress={handleSubmit}
                                 type={stage === 1 ? "disabled" : "secondary"}
                                 style={{ backgroundColor: "#4fdb74", width: "90%" }}
+                                loading={submitLoading}
                             >
                                 <MaterialIcons name="check" size={28} color="white" />
                             </Button>
