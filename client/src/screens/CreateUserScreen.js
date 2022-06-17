@@ -10,13 +10,15 @@ import { useStoreUser } from "../../Providers/UserProvider"
 import Button from "../Components/Button"
 import Input from "../Components/Input"
 import DicebearAvatar from "../Components/DicebearAvatar"
+import { MaterialIcons } from '@expo/vector-icons';
 
-const uniqueNumber = String(Math.floor((Math.random() * 5000)))
 
 export default CreateUserScreen = () => {
     const [userLoading, setUserLoading] = useState(false)
     const [username, changeUsername] = useState("")
     const [avatar, storeAvatar] = useState()
+    const [uniqueNumber, setUniqueNumber] = useState(String(Math.floor((Math.random() * 8000000))))
+
     const storeUser = useStoreUser()
 
 
@@ -32,6 +34,10 @@ export default CreateUserScreen = () => {
         })
     }
 
+    function handleRefreshAvatar() {
+        setUniqueNumber(String(Math.floor((Math.random() * 8000000))))
+    }
+
     return (
         <View style={CreateUserStyle.screenView}>
             <View style={CreateUserStyle.header}>
@@ -41,10 +47,7 @@ export default CreateUserScreen = () => {
                 <View style={CreateUserStyle.avatarView}>
                     <DicebearAvatar
                         seed={uniqueNumber + username}
-                        storeXML={xml => {
-                            console.log("CHANGED")
-                            storeAvatar(xml)
-                        }}
+                        storeXML={xml => storeAvatar(xml)}
                     />
                 </View>
                 <View style={CreateUserStyle.secionView}>
@@ -53,11 +56,21 @@ export default CreateUserScreen = () => {
                         value={username}
                         placeholder="أكتب أسمك"
                     />
-                    <Button
-                        onPress={handleSubmit}
-                        title={"أنشاء الحساب"}
-                        loading={userLoading}
-                    />
+                    <View style={CreateUserStyle.buttonView}>
+                        <Button
+                            onPress={handleSubmit}
+                            style={{ width: "75%" }}
+                            title={"أنشاء الحساب"}
+                            loading={userLoading}
+                        />
+                        <Button
+                            onPress={handleRefreshAvatar}
+                            style={{ width: "20%" }}
+                        >
+                            <MaterialIcons name="refresh" size={24} color="white" />
+                        </Button>
+                    </View>
+
                 </View>
             </View>
         </View>
@@ -67,8 +80,7 @@ export default CreateUserScreen = () => {
 const CreateUserStyle = StyleSheet.create({
     screenView: {
         flex: 1,
-        direction: "rtl",
-
+        direction: "rtl"
     },
     screenText: {
         fontFamily: "NotoKufiArabic-ExtraBold",
@@ -94,5 +106,11 @@ const CreateUserStyle = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex: 3
+    },
+    buttonView: {
+        width: 260,
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexDirection: "row"
     }
 })

@@ -26,7 +26,7 @@ export default UserProvider = (props) => {
 
     return (
         <UserContext.Provider value={user}>
-            <StoreUserContext.Provider value={(value) => storeUser(value, setUser)}>
+            <StoreUserContext.Provider value={(value, ignoreConfigured) => storeUser(value, ignoreConfigured, setUser)}>
                 {props.children}
             </StoreUserContext.Provider>
         </UserContext.Provider>
@@ -42,7 +42,7 @@ async function getUser(setUser) {
 
         const value = await AsyncStorage.getItem("user")
 
-        if (value !== null) {
+        if (value !== null && value.name) {
             let user = JSON.parse(value)
 
             socket.emit("configure-user", user, socketUser => {
@@ -57,9 +57,12 @@ async function getUser(setUser) {
     }
 }
 
-async function storeUser(value, setUser) {
+async function storeUser(value, ignoreConfigured, setUser) {
     try {
+        if (!value.name) return
         await AsyncStorage.setItem("user", JSON.stringify(value))
+
+        if (ignoreConfigured) return setUser(value)
 
         socket.emit("configure-user", value, socketUser => {
             setUser(socketUser)

@@ -34,11 +34,12 @@ export default ConnectionProvider = ({ children }) => {
     }, [])
 
     const configureUser = useCallback(async (callback) => {
-        const value = await AsyncStorage.getItem("user")
+        let value = await AsyncStorage.getItem("user")
+        value = JSON.parse(value)
 
-        if (value) {
-            socket.emit("configure-user", JSON.parse(value), socketUser => {
-                setUser(socketUser)
+        if (value !== null && value.name) {
+            socket.emit("configure-user", value, socketUser => {
+                setUser(socketUser, true)
                 setConnection({
                     ...connection,
                     reconnected: true
@@ -46,16 +47,24 @@ export default ConnectionProvider = ({ children }) => {
 
                 if (callback) callback()
             })
-
+        } else {
+            setUser({})
+            setConnection({
+                ...connection,
+                reconnected: true
+            })
         }
     })
 
     const errorListener = useCallback(error => {
         {
-            setConnection({
-                ...connection,
-                error
-            })
+            if (connection.isInternetReachable) {
+                console.log(error)
+                setConnection({
+                    ...connection,
+                    error
+                })
+            }
         }
     }, [connection])
 
@@ -71,6 +80,7 @@ export default ConnectionProvider = ({ children }) => {
             setConnection({
                 ...connection,
                 reconnected,
+                error: null,
                 isInternetReachable: netInfo.isInternetReachable
             })
         }

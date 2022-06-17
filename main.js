@@ -40,7 +40,7 @@ io.on("connection", socket => {
         if (event === "configure-user") return next()
 
         if (!socket.user) {
-            socket.emit("give-user", () => {
+            return socket.emit("give-user", () => {
                 next()
             })
         }
