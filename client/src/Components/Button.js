@@ -12,7 +12,7 @@ export default Button = ({ onPress, title, type, style = {}, loading = false, ch
     onPress = type === "disabled" ? null : onPress
 
     function getButtonStyle() {
-        if (loading) return [styles.button, styles.disabled]
+        if (loading) return [styles.button, styles[type], styles.disabled]
         if (!type) return styles.button
 
         return {
@@ -31,7 +31,7 @@ export default Button = ({ onPress, title, type, style = {}, loading = false, ch
     }
 
     return (
-        <Pressable style={[getButtonStyle(), style]} onPress={onPress}>
+        <Pressable style={[getButtonStyle(), style]} onPress={onPress} disabled={loading}>
             {
                 loading
                     ? <ActivityIndicator size={28} color="white" />
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         color: "white"
     },
     disabled: {
-        backgroundColor: "#e9aac3"
+        opacity: 0.5
     },
     primary: {
         backgroundColor: "#e06394"
@@ -66,5 +66,17 @@ const styles = StyleSheet.create({
     },
     secondarytext: {
         color: "#1c1c1b"
+    },
+    warning: {
+        backgroundColor: "#db4f4f"
+    },
+    warningText: {
+        color: "white"
+    },
+    success: {
+        backgroundColor: "#4fdb74"
+    },
+    successText: {
+        color: "white"
     }
 })

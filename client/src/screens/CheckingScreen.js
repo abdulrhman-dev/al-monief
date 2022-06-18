@@ -6,7 +6,7 @@ import SwipeableButton from "../Components/SwipeableButton"
 // Utilities
 import { useGame, useStoreGame } from "../../Providers/GameProvider"
 import { useRoom } from "../../Providers/RoomProvider"
-import { combineChecking, lengthOfObjectArrays } from "../Utilities/lib"
+import { combineChecking, lengthOfObjectArrays, pointUsers } from "../Utilities/lib"
 import { socket } from "../Utilities/SocketConnection"
 
 export default CheckingScreen = ({ navigation }) => {
@@ -100,7 +100,9 @@ export default CheckingScreen = ({ navigation }) => {
 
         setSubmitLoading(true)
 
-        socket.emit("submit-results", { results: results.current, roomId: room.id }, results => {
+        socket.emit("submit-results", { userWords: game.userWords, results: results.current, roomId: room.id }, (results, err) => {
+            if (err) navigation.replace("HomeScreen")
+
             setGame({
                 ...game,
                 results

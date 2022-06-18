@@ -5,13 +5,13 @@ import {
 } from "react-native"
 import { fillEmpty } from "../../Utilities/lib"
 
-const ROUNDS_NUMBER = 5
-export default RoundBar = ({ round }) => {
+const ROUND_NUMBER = 5
+export default RoundBar = ({ round, roundNumber = ROUND_NUMBER }) => {
 
     return (
         <View style={styles.roundBarContainer}>
-            {fillEmpty(new Array(round).fill(true), ROUNDS_NUMBER).map((round, index) => (
-                <View key={index} style={[styles.bar, round ? styles.barActive : null]} />
+            {fillEmpty(new Array(round).fill(true), roundNumber).map((round, index) => (
+                <View key={index} style={[styles.bar, round ? [styles.barActive] : null, { width: `${(100 / roundNumber) - 0.3}%` }]} />
             ))}
         </View>
     )
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     bar: {
-        width: "19.7%",
+        width: "19.7 - 0.3%",
         backgroundColor: "lightgrey",
         height: 35
     },

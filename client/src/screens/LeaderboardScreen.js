@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect } from "react"
-import { View, Text, StyleSheet, Alert } from "react-native"
+import React, { useCallback, useEffect, useState } from "react"
+import { View, Text, StyleSheet, Alert, ScrollView } from "react-native"
 // Components
 import Avatar from "../Components/Avatar"
+import Button from "../Components/Button"
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
 import { useStoreGame, useGame } from "../../Providers/GameProvider"
@@ -10,6 +11,8 @@ import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
 
 
 export default LeaderboardScreen = ({ navigation }) => {
+    const [leaveRoomLoading, setLeaveRoomLoading] = useState(false)
+    const [playAgainLoading, setPlayAgainLoading] = useState(false)
     const game = useGame()
     const user = useUser()
     const room = useRoom()
@@ -21,6 +24,8 @@ export default LeaderboardScreen = ({ navigation }) => {
             if (e.data.action.type !== "GO_BACK") return;
 
             e.preventDefault();
+
+            if (game.results.length === 0) return;
 
             Alert.alert(
                 "الخروج من الغرفة",
@@ -44,6 +49,19 @@ export default LeaderboardScreen = ({ navigation }) => {
         return unsubscribe
     }, [])
 
+    useEffect(() => {
+        socket.on("join-play-again", handleJoinPlayAgain)
+
+        return () => {
+            socket.off("join-play-again", handleJoinPlayAgain)
+        }
+    }, [socket])
+
+    const handleJoinPlayAgain = useCallback(room => {
+        setRoom(room)
+        navigation.replace("WaitingScreen")
+    }, [room])
+
     const handleReciveResults = useCallback(results => {
         setGame({
             ...game,
@@ -60,6 +78,25 @@ export default LeaderboardScreen = ({ navigation }) => {
         }
     }, [socket, game])
 
+    const handleLeaveRoom = () => {
+        if (leaveRoomLoading) return;
+
+        setLeaveRoomLoading(true)
+        socket.emit("leave-room", room.id, () => {
+            navigation.replace("HomeScreen")
+        })
+    }
+
+    const handlePlayAgain = () => {
+        if (playAgainLoading) return;
+
+        setPlayAgainLoading(true)
+        socket.emit("play-again", room.id, (room) => {
+            setRoom(room)
+            navigation.replace("WaitingScreen")
+        })
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.screenText}>النتيجة</Text>
@@ -68,20 +105,52 @@ export default LeaderboardScreen = ({ navigation }) => {
                 &&
                 <Text style={styles.loadingText}>يتم تصحيح النتيجة من قبل رئيس الغرفة</Text>
             }
-            {game.results.map((card, index) => (
-                <View key={index} style={styles.card}>
-                    <View style={{ borderColor: "#e06394", borderRadius: 50, borderWidth: card.user.id === user.id ? 3 : 0 }}>
-                        <Avatar
-                            xml={card.user.avatarXML}
-                            width="60"
-                            height="60"
-                        />
-                    </View>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
+                {game.results.map((card, index) => (
+                    <View key={index} style={styles.card}>
+                        <View style={{ borderColor: "#e06394", borderRadius: 50, borderWidth: card.user.id === user.id ? 3 : 0 }}>
+                            <Avatar
+                                xml={card.user.avatarXML}
+                                width="60"
+                                height="60"
+                            />
+                        </View>
 
-                    <Text style={styles.text}>{card.user.name}</Text>
-                    <Text style={styles.points}>{card.points}</Text>
-                </View>
-            ))}
+                        <Text style={styles.text}>{card.user.name}</Text>
+                        <Text style={styles.points}>{card.points}</Text>
+                    </View>
+                ))}
+            </ScrollView>
+
+            <View style={styles.buttonGroup}>
+                {
+                    user.id === room.leader.id
+
+                    &&
+
+                    <Button
+                        onPress={handlePlayAgain}
+                        title={"العب مرة اخرى"}
+                        type={"success"}
+                        loading={playAgainLoading}
+                    />
+                }
+                {
+                    game.results.length !== 0
+
+                    &&
+
+                    <Button
+                        title={"اخرج من الخرفة"}
+                        onPress={handleLeaveRoom}
+                        type={"warning"}
+                        loading={leaveRoomLoading}
+                    />
+
+                }
+
+
+            </View>
         </View>
     )
 }
@@ -104,10 +173,20 @@ const styles = StyleSheet.create({
         color: "#8A8A8A",
         textAlign: "center"
     },
+    scrollView: {
+        width: "85%",
+        height: "50%"
+    },
+    scrollViewContainer: {
+        flex: 3.5,
+        flexDirection: "column",
+        alignItems: "center",
+    },
     card: {
         backgroundColor: "white",
         flexDirection: "row",
-        width: "85%",
+        width: "95%",
+        marginHorizontal: "auto",
         height: 80,
         justifyContent: "space-between",
         alignItems: "center",
@@ -123,5 +202,12 @@ const styles = StyleSheet.create({
     points: {
         fontFamily: "NotoKufiArabic-ExtraBold",
         color: "#e06394"
+    },
+    buttonGroup: {
+        width: "85%",
+        padding: 25,
+        justifyContent: "flex-end",
+        alignItems: "center",
+        flex: 1.5,
     }
 })

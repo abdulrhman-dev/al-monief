@@ -7,15 +7,18 @@ export function fillEmpty(array, limit) {
 }
 
 
-let ARABIC_ALPHABET = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("")
 
 export function generateLetters(number) {
+    const ARABIC_ALPHABET = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("")
     let avalabileLettersArray = ARABIC_ALPHABET
-    let chosenLetters = []
+    const chosenLetters = []
+
 
     for (let i = 0; i < number; i++) {
         let randomIndex = Math.floor(Math.random() * avalabileLettersArray.length)
-        chosenLetters.push(avalabileLettersArray[randomIndex])
+        let letter = avalabileLettersArray[randomIndex]
+        if (letter === "ه") letter = "هـ"
+        chosenLetters.push(letter)
         avalabileLettersArray.splice(randomIndex, 1)
     }
 
@@ -113,4 +116,32 @@ export function removeWordsDuplicate(array) {
     });
 
     return uniqueArray
+}
+
+export function pointUsers(userSubmissions, correct) {
+    let results = []
+
+    userSubmissions.forEach((userSubmission, index) => {
+        let words = userSubmission.words
+        let user = userSubmission.user
+
+        let points = 0;
+
+        words.forEach(word => {
+            Object.keys(word).forEach(key => {
+                let match = correct[key].find(item => item.word === word[key])
+
+                if (match.status === "wrong") return points -= 5
+                if (match.count > 1 && match.status === "right") return points += 5
+                if (match.count === 1 && match.status === "right") return points += 10
+            })
+        })
+
+
+        if (index === 0) points = points + (points * 0.05)
+
+        results.push({ user, points })
+    })
+
+    return results.sort((a, b) => b.points - a.points)
 }

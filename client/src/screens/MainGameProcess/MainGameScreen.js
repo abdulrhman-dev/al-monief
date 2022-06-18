@@ -20,10 +20,9 @@ import { useRoom } from "../../../Providers/RoomProvider"
 import { useUser } from "../../../Providers/UserProvider"
 import { socket } from "../../Utilities/SocketConnection"
 import { moderateScale } from "react-native-size-matters"
+import config from "../../../config"
 
-
-const MAX_STAGE_NUMBER = 5
-const MAX_ROUND_NUMBER = 5
+const { MAX_ROUND_NUMBER, MAX_STAGE_NUMBER, ROUND_NUMBER, COUNTDOWN_NUMBER } = config
 
 export default MainGameScreen = ({ navigation }) => {
     const game = useGame()
@@ -183,10 +182,10 @@ export default MainGameScreen = ({ navigation }) => {
     return (
         <View style={MainGameScreenStyles.container}>
             <View style={MainGameScreenStyles.header}>
-                <RoundBar round={round} />
+                <RoundBar round={round} roundNumber={ROUND_NUMBER} />
                 <StageBar stage={stage} setStage={setStage} finished={finished} />
             </View>
-            {game.isCountdown && <Countdown finish={handleCountDownFinish} startingCountdown={15} />}
+            {game.isCountdown && <Countdown finish={handleCountDownFinish} startingCountdown={COUNTDOWN_NUMBER} />}
             <View style={isKeyboardVisible ? [MainGameScreenStyles.mainBody, { flex: 1.1 }] : MainGameScreenStyles.mainBody}>
                 <View style={MainGameScreenStyles.mainBodyHeader}>
                     <Text style={MainGameScreenStyles.mainText}>{`أكتب ${items[stage - 1].title} بحرف ال(${LETTER})`}</Text>

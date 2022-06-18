@@ -40,12 +40,11 @@ async function getUser(setUser) {
         // await AsyncStorage.removeItem("user")
         setUser({ loading: true })
 
-        const value = await AsyncStorage.getItem("user")
+        let value = await AsyncStorage.getItem("user")
+        value = JSON.parse(value)
 
         if (value !== null && value.name) {
-            let user = JSON.parse(value)
-
-            socket.emit("configure-user", user, socketUser => {
+            socket.emit("configure-user", value, socketUser => {
                 setUser(socketUser)
             })
 
