@@ -4,5 +4,6 @@ export default {
     ROUND_NUMBER: 5,
     MAX_ROUND_NUMBER: 5,
     COUNTDOWN_NUMBER: 1,
+    SHARE_URL: "http://192.168.1.19:1234"
     // SERVER_URL: "https://al-monief-socket-server.herokuapp.com/"
 }

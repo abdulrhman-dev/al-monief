@@ -2,9 +2,11 @@ import React from "react"
 import {
     View,
     Text,
+    BackHandler,
     StyleSheet
 } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons';
+import Button from "../Components/Button";
 
 
 export default ErrorOverlay = () => {
@@ -12,6 +14,12 @@ export default ErrorOverlay = () => {
         <View style={styles.container}>
             <MaterialIcons name="error" size={100} color="white" />
             <Text style={styles.text}>يوجد مشكلة في الأتصال بالخادم</Text>
+            <Button
+                title={"اغلاق التطبيق"}
+                type={"secondary"}
+                style={{ width: "50%", marginTop: 40 }}
+                onPress={() => BackHandler.exitApp()}
+            />
         </View>
     )
 }
@@ -29,6 +37,6 @@ const styles = StyleSheet.create({
         fontFamily: "NotoKufiArabic-ExtraBold",
         color: "white",
         marginTop: 20,
-        fontSize: 15
+        fontSize: 18
     }
 })

@@ -1,11 +1,16 @@
-require("dotenv").config()
+import "dotenv/config"
 
-const app = require("express")()
-const httpServer = require("http").createServer(app)
-const { generateAndMatch, pointUsers } = require("./lib")
+import express from "express"
+import { createServer } from "http"
+import { Server } from "socket.io";
+import { generateAndMatch, pointUsers } from "./lib.js"
+
+const app = express()
+
+const httpServer = createServer()
 
 
-const io = require("socket.io")(httpServer, {
+const io = new Server(httpServer, {
     cors: {
         origin: process.env.CLIENT_ORIGIN
     }
@@ -15,8 +20,16 @@ let rooms = []
 const USER_LIMIT = 4
 
 app.get("/", (req, res) => {
+    console.log("TEST")
     res.send(`socket.io started on PORT: ${process.env.PORT}`)
 })
+
+app.get("/room/:id", (req, res) => {
+    const { id } = req.params
+
+    res.redirect(`moneif://game/room/${id}`);
+})
+
 
 io.on("connection", socket => {
     console.log(`${socket.id} connected...`)
@@ -108,7 +121,6 @@ io.on("connection", socket => {
 
         if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
 
-        console.log("JOIN ROOM TRIGGERD")
 
 
         rooms[match] = {
@@ -265,3 +277,5 @@ io.of("/").adapter.on("join-room", (room, id) => {
 httpServer.listen(process.env.PORT || 8000, () => {
     console.log("Server is running...")
 })
+
+app.listen(1234)

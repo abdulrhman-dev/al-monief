@@ -1,12 +1,7 @@
-function generateShortId() {
-    let MAX_VALUE = 999999999;
-    let MIN_VALUE = 100000000;
+import { nanoid } from "nanoid"
 
-    return (Math.floor(Math.random() * MAX_VALUE) + MIN_VALUE).toString(36)
-}
-
-function generateAndMatch(rooms) {
-    const id = generateShortId()
+export function generateAndMatch(rooms) {
+    const id = nanoid(6)
     const match = rooms.find(room => room.id === id)
 
     if (match) generateAndMatch()
@@ -14,7 +9,7 @@ function generateAndMatch(rooms) {
     return id
 }
 
-function pointUsers(userSubmissions, correct) {
+export function pointUsers(userSubmissions, correct) {
     let results = []
 
     userSubmissions.forEach((userSubmission, index) => {
@@ -43,9 +38,3 @@ function pointUsers(userSubmissions, correct) {
 }
 
 
-
-module.exports = {
-    generateShortId,
-    generateAndMatch,
-    pointUsers
-}

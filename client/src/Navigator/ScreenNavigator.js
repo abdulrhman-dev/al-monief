@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 // React Navigation
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// Screen s
+// Screens
 import HomeScreen from "../Screens/HomeScreen";
 import CreateUserScreen from "../Screens/CreateUserScreen";
 import WaitingScreen from "../Screens/WaitingScreen";
@@ -11,6 +11,8 @@ import QrScannerScreen from "../Screens/QrScannerScreen";
 import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 import CheckingScreen from "../Screens/CheckingScreen";
 import LeaderboardScreen from "../Screens/LeaderboardScreen";
+import TransferringScreen from "../Screens/TransferringScreen";
+
 // Overlays
 import LoadingOverlay from "../Overlays/LoadingOverlay";
 import NoInternetOverlay from "../Overlays/NoInternetOverlay";
@@ -19,6 +21,8 @@ import ErrorOverlay from "../Overlays/ErrorOverlay";
 import { useUser } from "../../Providers/UserProvider"
 import { useConnection } from "../../Providers/ConnectionProvider"
 
+
+import linking from "./linking";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +43,7 @@ const ScreenNavigator = () => {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
             {
                 user.name ? <UserFound /> : <UserMissing />
             }
@@ -59,6 +63,7 @@ const UserFound = () => {
                 <Stack.Screen name="HomeScreen" component={HomeScreen} />
                 <Stack.Screen name="WaitingScreen" component={WaitingScreen} />
                 <Stack.Screen name="JoinScreen" component={JoinScreen} />
+                <Stack.Screen name="TransferringScreen" component={TransferringScreen} />
                 <Stack.Screen name="QrScannerScreen" component={QrScannerScreen} />
             </Stack.Group>
             <Stack.Group>

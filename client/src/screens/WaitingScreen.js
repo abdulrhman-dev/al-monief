@@ -8,7 +8,8 @@ import {
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
 import { fillEmpty, generateLetters } from "../Utilities/lib"
-import { moderateScale, scale } from "react-native-size-matters"
+import { moderateScale } from "react-native-size-matters"
+import Share from "react-native-share";
 // Context
 import { useRoom, useSetRoom } from "../../Providers/RoomProvider"
 import { useStoreGame } from "../../Providers/GameProvider"
@@ -18,6 +19,10 @@ import QRCode from "react-native-qrcode-svg";
 import Button from "../Components/Button"
 import Avatar from "../Components/Avatar"
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+
+import config from "../../config"
+
+const { SHARE_URL } = config
 
 let USER_LIMIT = 4;
 
@@ -69,10 +74,11 @@ export default WaitingScreen = ({ navigation }) => {
         setDisconnected(true)
     }, [])
 
-    const handleUserJoin = useCallback(user => {
+    const handleUserJoin = useCallback(newUser => {
+        if (newUser.id === user.id) return;
         setRoom({
             ...room,
-            users: [...room.users, user]
+            users: [...room.users, newUser]
         })
     }, [room])
 
@@ -119,6 +125,18 @@ export default WaitingScreen = ({ navigation }) => {
         })
     }
 
+    const handleShareRoom = async () => {
+        let options = {
+            message: `${SHARE_URL}/room/${room.id}`
+        }
+
+        try {
+            const ShareRes = await Share.open(options)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <View style={WaitingScreenStyles.container}>
             <View style={WaitingScreenStyles.header}>
@@ -126,7 +144,10 @@ export default WaitingScreen = ({ navigation }) => {
             </View>
             <View style={WaitingScreenStyles.body}>
                 <View style={WaitingScreenStyles.mainbodyContent}>
-                    <Text style={WaitingScreenStyles.text}>{room.id} :كود الغرفة</Text>
+                    <View style={WaitingScreenStyles.roomIdBar}>
+                        <Text style={WaitingScreenStyles.text}>{room.id} :كود الغرفة</Text>
+                        <MaterialCommunityIcons name="share-circle" size={30} color="grey" style={{ margin: 5 }} onPress={handleShareRoom} />
+                    </View>
 
                     <QRCode
                         value={room.id}
@@ -256,7 +277,12 @@ const WaitingScreenStyles = StyleSheet.create({
         fontFamily: "NotoKufiArabic-Bold",
         color: "black",
         fontSize: 20,
-        margin: 20
+    },
+    roomIdBar: {
+        flexDirection: "row",
+        alignItems: "center",
+        width: "100%",
+        height: 70
     },
     header: {
         width: "100%",
