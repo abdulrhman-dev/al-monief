@@ -69,17 +69,16 @@ export function combineObjects(arrayOfObjects, baseObject) {
 
     Object.keys(obj).forEach(key => {
         let array = obj[key]
-        let uniqueArray = removeWordsDuplicate(array)
-
         let counts = countDuplicate(array)
 
-        obj[key] = uniqueArray.map(item => {
+        array = array.map(item => (({
+            word: item,
+            count: counts[item]
+        })))
 
-            return (({
-                word: item,
-                count: counts[item]
-            }))
-        })
+        array = getUniqueListBy(array, "word")
+
+        obj[key] = array
     })
 
     return obj

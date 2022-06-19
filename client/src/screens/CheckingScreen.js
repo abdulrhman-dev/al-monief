@@ -1,8 +1,9 @@
 import React, { useMemo, useState, useEffect, useRef } from "react"
-import { ScrollView, View, Text, StyleSheet } from "react-native"
+import { ScrollView, View, Text, StyleSheet, FlatList } from "react-native"
 // Componenets
 import Button from "../Components/Button"
 import SwipeableButton from "../Components/SwipeableButton"
+import LoadingOverlay from "../Overlays/LoadingOverlay"
 // Utilities
 import { useGame, useStoreGame } from "../../Providers/GameProvider"
 import { useRoom } from "../../Providers/RoomProvider"
@@ -11,12 +12,13 @@ import { socket } from "../Utilities/SocketConnection"
 
 export default CheckingScreen = ({ navigation }) => {
     const [submitLoading, setSubmitLoading] = useState(false)
+    const [loadingItems, setLoadingItems] = useState(true)
     const [isDisabled, setIsDisabled] = useState(true)
     const results = useRef({})
     const game = useGame()
     const setGame = useStoreGame()
     const room = useRoom()
-    const words = useMemo(() => combineChecking(game.userWords), [game.userWords])
+    const [words, setWords] = useState({})
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("beforeRemove", e => {
@@ -27,6 +29,19 @@ export default CheckingScreen = ({ navigation }) => {
 
         return unsubscribe
     }, [navigation])
+
+
+    useEffect(() => {
+        setWords(combineChecking(game.userWords))
+    }, [game.userWords])
+
+    useEffect(() => {
+        if (lengthOfObjectArrays(words) !== 0) {
+            setTimeout(() => {
+                setLoadingItems(false)
+            }, 400)
+        }
+    }, [words])
 
     const onLeft = (word, type) => {
         if (results.current[type]) {
@@ -50,8 +65,8 @@ export default CheckingScreen = ({ navigation }) => {
 
         })
 
-        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
-        if (setIsDisabled) setIsDisabled(false)
+        // if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        // if (setIsDisabled) setIsDisabled(false)
     }
 
     const onRight = (word, type) => {
@@ -79,8 +94,8 @@ export default CheckingScreen = ({ navigation }) => {
             ]
         })
 
-        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
-        if (setIsDisabled) setIsDisabled(false)
+        // if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        // if (setIsDisabled) setIsDisabled(false)
     }
 
     const reset = (word, type) => {
@@ -115,34 +130,53 @@ export default CheckingScreen = ({ navigation }) => {
         <View style={styles.checkingScreenContainer}>
             <Text style={styles.screenText}>تصحيح النتيجة</Text>
 
-            <ScrollView style={styles.scrollView}>
+            {
+                Object.keys(words).length === 0
 
-                {
-                    Object.keys(words).length === 0
-
-                        ?
-
+                    ?
+                    <View style={styles.placeholderView}>
                         <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>
-                        :
-                        Object.keys(words).map((key, index) => (
-                            <View key={index}>
-                                <Text style={styles.sectionText}>{key}</Text>
-                                {(words[key].map((obj, index) => (
-                                    <SwipeableButton
-                                        title={obj.word}
-                                        type={key}
-                                        onLeft={onLeft}
-                                        onRight={onRight}
-                                        reset={reset}
-                                        key={index}
+                    </View>
+
+                    :
+
+                    (
+                        <FlatList
+                            keyExtractor={(_, index) => index}
+                            data={Object.keys(words)}
+                            renderItem={({ item: key }, index) => (
+                                <View key={index}>
+                                    <Text style={styles.sectionText}>{key}</Text>
+                                    <FlatList
+                                        keyExtractor={(_, index) => index}
+                                        data={words[key]}
+                                        renderItem={({ item: obj }) => (
+                                            <SwipeableButton
+                                                title={obj.word}
+                                                type={key}
+                                                onLeft={onLeft}
+                                                onRight={onRight}
+                                                reset={reset}
+                                                key={index}
+                                            />
+                                        )}
                                     />
-                                )))}
-                            </View>
-                        ))
-                }
+                                </View>
+                            )}
+                        />
+                    )
+            }
 
+            {
+                loadingItems && Object.keys(words).length !== 0
 
-            </ScrollView>
+                &&
+
+                <View style={styles.placeholderView}>
+                    <LoadingOverlay backgroundColor="white" color="grey" />
+                </View>
+            }
+
             <View style={styles.buttonContainer}>
                 <Button
                     title={"تسليم النتيجة"}
@@ -151,7 +185,7 @@ export default CheckingScreen = ({ navigation }) => {
                     onPress={handleSubmitResults}
                 />
             </View>
-        </View>
+        </View >
     )
 }
 
@@ -182,5 +216,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         height: "15%"
+    },
+    placeholderView: {
+        height: "70.9%",
+        width: "100%"
     }
 })

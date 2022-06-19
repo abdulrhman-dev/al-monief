@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import {
     View,
     Text,
@@ -8,6 +8,7 @@ import { Swipeable } from "react-native-gesture-handler"
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default SwipeableButton = ({ title, type, reset, onLeft, onRight }) => {
+
 
     return (
         <Swipeable

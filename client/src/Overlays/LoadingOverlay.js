@@ -5,17 +5,17 @@ import {
     StyleSheet
 } from "react-native"
 
-export default LoadingOverlay = () => {
+export default LoadingOverlay = ({ backgroundColor = "#323440", color = "white" }) => {
     return (
-        <View style={styles.container}>
-            <ActivityIndicator size={60} color="white" />
+        <View style={[styles.container, { backgroundColor }]}>
+            <ActivityIndicator size={60} color={color} />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#323440",
+        zIndex: 5,
         width: "100%",
         height: "100%",
         position: "absolute",

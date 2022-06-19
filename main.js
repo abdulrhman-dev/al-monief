@@ -2,7 +2,7 @@ require("dotenv").config()
 
 const app = require("express")()
 const httpServer = require("http").createServer(app)
-const { generateAndMatch, pointUsers, getUniqueListBy } = require("./lib")
+const { generateAndMatch, pointUsers } = require("./lib")
 
 
 const io = require("socket.io")(httpServer, {
@@ -110,11 +110,10 @@ io.on("connection", socket => {
 
         console.log("JOIN ROOM TRIGGERD")
 
-        let newUsers = [...rooms[match].users, socket.user]
 
         rooms[match] = {
             ...rooms[match],
-            users: getUniqueListBy(newUsers, "id")
+            users: [...rooms[match].users, socket.user]
         }
 
         socket.join(id)
@@ -122,7 +121,7 @@ io.on("connection", socket => {
 
         callback(null, rooms[match])
 
-        io.sockets.to(id).emit("user-joined", socket.user)
+        socket.broadcast.to(id).emit("user-joined", socket.user)
     })
 
     socket.on("start-game", ({ roomId, game }, callback) => {
