@@ -11,7 +11,7 @@ import Button from "../Components/Button"
 import { useSetRoom } from "../../Providers/RoomProvider"
 // Utilities
 import { socket } from "../Utilities/SocketConnection"
-
+import { getUniqueListBy } from '../Utilities/lib'
 
 export default JoinScreen = ({ navigation }) => {
     const setRoom = useSetRoom()
@@ -30,6 +30,7 @@ export default JoinScreen = ({ navigation }) => {
 
     function joinRoom() {
         if (joinLoading) return;
+        console.log("CLICKED")
         setJoinLoading(true)
 
         socket.emit("join-room", roomId, (err, room) => {
@@ -38,7 +39,10 @@ export default JoinScreen = ({ navigation }) => {
                 return setErrorText(err.msg)
             }
 
-            setRoom(room)
+            setRoom({
+                ...room,
+                users: getUniqueListBy(room.users, "id")
+            })
             setErrorText("")
             navigation.navigate("WaitingScreen")
         })

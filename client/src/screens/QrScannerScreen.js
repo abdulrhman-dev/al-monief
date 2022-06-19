@@ -10,6 +10,7 @@ import Button from "../Components/Button"
 // Utilities
 import { useSetRoom } from "../../Providers/RoomProvider"
 import { socket } from "../Utilities/SocketConnection"
+import { getUniqueListBy } from "../Utilities/lib"
 
 
 // original code for more info: https://www.youtube.com/watch?v=LtbuOgoQJAg
@@ -60,6 +61,7 @@ export default QrScannerScreen = ({ navigation }) => {
 
     const handleJoinRoom = () => {
         if (joinLoading) return;
+        console.log("CLICKED")
 
         setJoinLoading(true)
         setScanned(false)
@@ -71,7 +73,10 @@ export default QrScannerScreen = ({ navigation }) => {
                 setJoinLoading(false)
                 return setErrorText(err.msg)
             }
-            setRoom(room)
+            setRoom({
+                ...room,
+                users: getUniqueListBy(room.users, "id")
+            })
             setErrorText("")
             navigation.navigate("WaitingScreen")
         })

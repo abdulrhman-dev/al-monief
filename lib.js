@@ -42,8 +42,13 @@ function pointUsers(userSubmissions, correct) {
     return results.sort((a, b) => b.points - a.points)
 }
 
+function getUniqueListBy(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
+}
+
 module.exports = {
     generateShortId,
     generateAndMatch,
-    pointUsers
+    pointUsers,
+    getUniqueListBy
 }

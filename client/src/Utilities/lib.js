@@ -145,3 +145,8 @@ export function pointUsers(userSubmissions, correct) {
 
     return results.sort((a, b) => b.points - a.points)
 }
+
+// https://stackoverflow.com/a/56768137
+export function getUniqueListBy(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
+}

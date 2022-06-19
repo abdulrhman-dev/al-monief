@@ -2,7 +2,7 @@ require("dotenv").config()
 
 const app = require("express")()
 const httpServer = require("http").createServer(app)
-const { generateAndMatch, pointUsers } = require("./lib")
+const { generateAndMatch, pointUsers, getUniqueListBy } = require("./lib")
 
 
 const io = require("socket.io")(httpServer, {
@@ -108,10 +108,13 @@ io.on("connection", socket => {
 
         if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
 
+        console.log("JOIN ROOM TRIGGERD")
+
+        let newUsers = [...rooms[match].users, socket.user]
 
         rooms[match] = {
             ...rooms[match],
-            users: [...rooms[match].users, socket.user]
+            users: getUniqueListBy(newUsers, "id")
         }
 
         socket.join(id)
