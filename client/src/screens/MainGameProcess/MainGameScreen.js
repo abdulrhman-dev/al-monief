@@ -57,10 +57,6 @@ export default MainGameScreen = ({ navigation }) => {
     }, [game])
 
     useEffect(() => {
-
-    }, [words])
-
-    useEffect(() => {
         socket.on("game-ended", handleOnGameEnd)
         socket.on("start-countdown", handleStartCountdown)
 

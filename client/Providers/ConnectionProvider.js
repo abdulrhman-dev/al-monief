@@ -2,7 +2,7 @@ import { useContext, createContext, useState, useEffect, useCallback } from "rea
 import { useNetInfo } from "@react-native-community/netinfo";
 // Context Provider
 import { useStoreUser } from "./UserProvider"
-import { useSetRoom } from "./RoomProvider"
+import { useSetRoom, useRoom } from "./RoomProvider"
 import { useStoreGame } from "./GameProvider"
 // Utilties
 import { socket } from "../src/Utilities/SocketConnection"
@@ -17,6 +17,7 @@ export const useConnection = () => {
 export default ConnectionProvider = ({ children }) => {
     const netInfo = useNetInfo()
     const setUser = useStoreUser()
+    const room = useRoom()
     const setRoom = useSetRoom()
     const setGame = useStoreGame()
 
@@ -68,6 +69,10 @@ export default ConnectionProvider = ({ children }) => {
         }
     }, [connection])
 
+    const handleUserLeave = useCallback(({ roomData }) => {
+        setRoom(roomData)
+    }, [room])
+
     useEffect(() => {
         if (netInfo.isConnected !== null) {
             let reconnected = null
@@ -90,12 +95,16 @@ export default ConnectionProvider = ({ children }) => {
         socket.io.on("reconnect", reconnectListener)
         socket.io.on("error", errorListener);
         socket.on("give-user", giveUserListener)
+        socket.on("user-left", handleUserLeave)
+
 
 
         return () => {
             socket.io.off("reconnect", reconnectListener)
             socket.io.off("error", errorListener)
             socket.off("give-user", giveUserListener)
+            socket.off("user-left", handleUserLeave)
+
         }
     }, [socket, connection])
 

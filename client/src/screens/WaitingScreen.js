@@ -69,10 +69,6 @@ export default WaitingScreen = ({ navigation }) => {
         setDisconnected(true)
     }, [])
 
-    const handleUserLeave = useCallback(({ roomData }) => {
-        setRoom(roomData)
-    }, [room])
-
     const handleUserJoin = useCallback(user => {
         setRoom({
             ...room,
@@ -88,13 +84,11 @@ export default WaitingScreen = ({ navigation }) => {
     useEffect(() => {
         // sockets
         socket.on("user-joined", handleUserJoin)
-        socket.on("user-left", handleUserLeave)
         socket.on("emit-start-game", handleOnStartGame)
         socket.on("disconnect", handleUserDisconnect)
 
         return () => {
             socket.off("user-joined", handleUserJoin)
-            socket.off("user-left", handleUserLeave)
             socket.off("emit-start-game", handleOnStartGame)
             socket.off("disconnect", handleUserDisconnect)
         }

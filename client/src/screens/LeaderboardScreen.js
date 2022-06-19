@@ -51,11 +51,23 @@ export default LeaderboardScreen = ({ navigation }) => {
 
     useEffect(() => {
         socket.on("join-play-again", handleJoinPlayAgain)
+        socket.on("transfer-results", handleReceiveLeaderBoard)
+        socket.on("show-results", handleReciveResults)
+
 
         return () => {
             socket.off("join-play-again", handleJoinPlayAgain)
+            socket.off("transfer-results", handleReceiveLeaderBoard)
+            socket.off("show-results", handleReciveResults)
         }
-    }, [socket])
+    }, [socket, game, room])
+
+
+    useEffect(() => {
+        if (room.leader.id === user.id && game.results.length === 0) {
+            navigation.replace("CheckingScreen")
+        }
+    }, [room])
 
     const handleJoinPlayAgain = useCallback(room => {
         setRoom(room)
@@ -69,14 +81,18 @@ export default LeaderboardScreen = ({ navigation }) => {
         })
     }, [game])
 
+    const handleReceiveLeaderBoard = useCallback(({ room, userWords }) => {
+        setRoom(room)
 
-    useEffect(() => {
-        socket.on("show-results", handleReciveResults)
+        if (game.results.length !== 0) return;
 
-        return () => {
-            socket.off("show-results", handleReciveResults)
-        }
-    }, [socket, game])
+        setGame({
+            ...game,
+            userWords
+        })
+        navigation.replace("CheckingScreen")
+    }, [game, room])
+
 
     const handleLeaveRoom = () => {
         if (leaveRoomLoading) return;
@@ -123,8 +139,10 @@ export default LeaderboardScreen = ({ navigation }) => {
             </ScrollView>
 
             <View style={styles.buttonGroup}>
+
+
                 {
-                    user.id === room.leader.id
+                    user.id === room.leader.id && game.results.length !== 0
 
                     &&
 
