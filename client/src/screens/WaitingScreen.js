@@ -127,11 +127,11 @@ export default WaitingScreen = ({ navigation }) => {
 
     const handleShareRoom = async () => {
         let options = {
-            message: `${SHARE_URL}/room/${room.id}`
+            message: `تم دعوتك من قبل ${user.name}` + `\n ${SHARE_URL}/room/${room.id}`
         }
 
         try {
-            const ShareRes = await Share.open(options)
+            await Share.open(options)
         } catch (err) {
             console.log(err)
         }
@@ -170,7 +170,7 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <View style={WaitingScreenStyles.button}>
                         <Button
-                            // type={room.users.length >= 2 ? "primary" : "disabled"}
+                            type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
                             loading={startRoomLoading}
                             onPress={handleStartGame}
