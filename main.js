@@ -7,7 +7,7 @@ import { generateAndMatch, pointUsers } from "./lib.js"
 
 const app = express()
 
-const httpServer = createServer()
+const httpServer = createServer(app)
 
 
 const io = new Server(httpServer, {
@@ -278,4 +278,4 @@ httpServer.listen(process.env.PORT || 8000, () => {
     console.log("Server is running...")
 })
 
-app.listen(1234)
+// app.listen(1234)
