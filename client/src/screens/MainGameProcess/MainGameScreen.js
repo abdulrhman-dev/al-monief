@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, useRef } from "react"
 import {
+    AppState,
     View,
     Text,
     Keyboard,
@@ -37,6 +38,8 @@ export default MainGameScreen = ({ navigation }) => {
     const [round, setRound] = useState(1)
     const [submitLoading, setSubmitLoading] = useState(false)
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+
 
     const LETTER = game.roundsLetters[round - 1]
 
@@ -98,6 +101,21 @@ export default MainGameScreen = ({ navigation }) => {
 
         return unsubscribe
     }, [navigation, stage])
+
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener("change", nextAppState => {
+
+            if (nextAppState === "background") {
+                socket.emit("leave-room", room.id)
+                navigation.replace("HomeScreen")
+            }
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
 
     const handleWordChange = (e, name) => {
         let value = e.nativeEvent.text
