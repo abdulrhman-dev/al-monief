@@ -39,7 +39,7 @@ export default CheckingScreen = ({ navigation }) => {
         if (lengthOfObjectArrays(words) !== 0) {
             setTimeout(() => {
                 setLoadingItems(false)
-            }, 400)
+            }, 1350)
         }
     }, [words])
 
@@ -65,8 +65,8 @@ export default CheckingScreen = ({ navigation }) => {
 
         })
 
-        // if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
-        // if (setIsDisabled) setIsDisabled(false)
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
     }
 
     const onRight = (word, type) => {
@@ -94,11 +94,12 @@ export default CheckingScreen = ({ navigation }) => {
             ]
         })
 
-        // if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
-        // if (setIsDisabled) setIsDisabled(false)
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
     }
 
     const reset = (word, type) => {
+        console.log("RESET")
 
         if (!results.current[type]) return;
 
@@ -107,13 +108,46 @@ export default CheckingScreen = ({ navigation }) => {
             ...results.current,
             [type]: results.current[type].filter(result => result.word !== word)
         })
+
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
+    }
+
+    const handleDuplicate = (word, type) => {
+        console.log("DUPLICATE")
+        let value = [];
+        if (results.current[type]) value = results.current[type]
+
+        if (results.current[type]) {
+            const exist = results.current[type].find(item => item.word === word)
+
+            if (exist) return;
+        }
+
+
+        results.current = ({
+            ...results.current,
+            [type]: [
+                ...value,
+                {
+                    word,
+                    count: 2,
+                    status: "right"
+                }
+            ]
+        })
+
+        if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return setIsDisabled(true)
+        if (setIsDisabled) setIsDisabled(false)
     }
 
     const handleSubmitResults = () => {
         if (lengthOfObjectArrays(results.current) !== lengthOfObjectArrays(words)) return;
         if (submitLoading) return;
 
+        setIsDisabled(true)
         setSubmitLoading(true)
+        setWords([])
 
         socket.emit("submit-results", { userWords: game.userWords, results: results.current, roomId: room.id }, (results, err) => {
             if (err) navigation.replace("HomeScreen")
@@ -129,13 +163,22 @@ export default CheckingScreen = ({ navigation }) => {
     return (
         <View style={styles.checkingScreenContainer}>
             <Text style={styles.screenText}>تصحيح النتيجة</Text>
+            {
+                loadingItems && Object.keys(words).length !== 0
+
+                &&
+
+                <View style={styles.placeholderView}>
+                    <LoadingOverlay backgroundColor="white" color="grey" />
+                </View>
+            }
 
             {
                 Object.keys(words).length === 0
 
                     ?
                     <View style={styles.placeholderView}>
-                        <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>
+                        {isDisabled && <Text style={styles.loadingText}>ما زال هناك من هو في اللعبة</Text>}
                     </View>
 
                     :
@@ -156,6 +199,7 @@ export default CheckingScreen = ({ navigation }) => {
                                                 type={key}
                                                 onLeft={onLeft}
                                                 onRight={onRight}
+                                                handleDuplicate={handleDuplicate}
                                                 reset={reset}
                                                 key={index}
                                             />
@@ -167,15 +211,6 @@ export default CheckingScreen = ({ navigation }) => {
                     )
             }
 
-            {
-                loadingItems && Object.keys(words).length !== 0
-
-                &&
-
-                <View style={styles.placeholderView}>
-                    <LoadingOverlay backgroundColor="white" color="grey" />
-                </View>
-            }
 
             <View style={styles.buttonContainer}>
                 <Button

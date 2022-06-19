@@ -1,28 +1,56 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
     View,
     Text,
     StyleSheet
 } from "react-native"
-import { Swipeable } from "react-native-gesture-handler"
+import { Swipeable, LongPressGestureHandler, State } from "react-native-gesture-handler"
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default SwipeableButton = ({ title, type, reset, onLeft, onRight }) => {
+export default SwipeableButton = ({ title, type, reset, onLeft, onRight, handleDuplicate }) => {
+    const [wasPressed, setWasPressed] = useState(false)
 
+    const onLongPress = event => {
+        if (event.nativeEvent.state === State.ACTIVE) {
+
+            if (!wasPressed) {
+                handleDuplicate(title, type)
+            } else {
+                reset(title, type)
+            }
+
+            setWasPressed(!wasPressed)
+        }
+    }
 
     return (
+
         <Swipeable
-            renderRightActions={() => rightActions(title)}
-            renderLeftActions={() => leftActions(title)}
+            renderRightActions={() => !wasPressed ? rightActions(title) : null}
+            renderLeftActions={() => !wasPressed ? leftActions(title) : null}
             onSwipeableClose={() => reset(title, type)}
             onSwipeableRightOpen={() => onRight(title, type)}
             onSwipeableLeftOpen={() => onLeft(title, type)}
         >
-            <View style={styles.container}>
-                <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
-                <Text style={styles.titleText}>{title}</Text>
-                <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
-            </View>
+            <LongPressGestureHandler
+                onHandlerStateChange={onLongPress}
+                minDurationMs={350}
+            >
+                {
+                    !wasPressed ?
+                        <View style={styles.container}>
+                            <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
+                            <Text style={styles.titleText}>{title}</Text>
+                            <MaterialIcons name="drag-indicator" size={20} color="lightgrey" />
+                        </View>
+
+                        :
+                        <View style={[styles.container, { backgroundColor: "#4fa3db", justifyContent: "center", alignItems: "center" }]}>
+                            <Text style={[styles.titleText, { color: "white" }]}>{title}</Text>
+                        </View>
+                }
+            </LongPressGestureHandler>
+
         </Swipeable>
     )
 }

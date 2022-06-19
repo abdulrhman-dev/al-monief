@@ -3,6 +3,6 @@ export default {
     MAX_STAGE_NUMBER: 5,
     ROUND_NUMBER: 5,
     MAX_ROUND_NUMBER: 5,
-    COUNTDOWN_NUMBER: 15,
+    COUNTDOWN_NUMBER: 1,
     // SERVER_URL: "https://al-monief-socket-server.herokuapp.com/"
 }

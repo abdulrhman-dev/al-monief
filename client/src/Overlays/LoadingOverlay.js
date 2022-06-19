@@ -5,9 +5,9 @@ import {
     StyleSheet
 } from "react-native"
 
-export default LoadingOverlay = ({ backgroundColor = "#323440", color = "white" }) => {
+export default LoadingOverlay = ({ backgroundColor = "#323440", color = "white", style = {} }) => {
     return (
-        <View style={[styles.container, { backgroundColor }]}>
+        <View style={[styles.container, { backgroundColor, ...style }]}>
             <ActivityIndicator size={60} color={color} />
         </View>
     )
