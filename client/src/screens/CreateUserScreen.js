@@ -11,7 +11,9 @@ import Button from "../Components/Button"
 import Input from "../Components/Input"
 import DicebearAvatar from "../Components/DicebearAvatar"
 import { MaterialIcons } from '@expo/vector-icons';
-
+// UUID
+import "react-native-get-random-values"
+import { v4 as uuidv4 } from "uuid";
 
 export default CreateUserScreen = () => {
     const [userLoading, setUserLoading] = useState(false)
@@ -30,7 +32,10 @@ export default CreateUserScreen = () => {
 
         storeUser({
             name: username,
-            avatarXML: avatar
+            avatarXML: avatar,
+            generalId: uuidv4(),
+            numberOfGames: 0,
+            gamePlaces: []
         })
     }
 

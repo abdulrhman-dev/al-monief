@@ -3,7 +3,8 @@ import "dotenv/config"
 import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io";
-import { generateAndMatch, pointUsers } from "./lib.js"
+import { generateAndMatch, pointUsers, getLeaderboardsSorted } from "./lib.js"
+
 
 const app = express()
 
@@ -190,6 +191,10 @@ io.on("connection", socket => {
     socket.on("leave-room", (id, callback) => {
         socket.leave(id)
         if (callback) callback()
+    })
+
+    socket.on("get-leaderboards", (callback) => {
+        callback(getLeaderboardsSorted())
     })
 })
 

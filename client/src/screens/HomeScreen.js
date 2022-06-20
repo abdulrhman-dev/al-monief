@@ -11,19 +11,23 @@ import Avatar from "../Components/Avatar"
 // Provider
 import { useUser } from "../../Providers/UserProvider"
 import { useSetRoom } from "../../Providers/RoomProvider"
+import { useSetLeaderboards } from "../../Providers/LeaderboardsProvider"
 // Utilities 
 import { socket } from "../Utilities/SocketConnection"
-import { moderateScale, scale } from "react-native-size-matters"
+import { moderateScale } from "react-native-size-matters"
 
 
 export default HomeScreen = ({ navigation }) => {
     const [createRoomLoading, setCreateRoomLoaidng] = useState(false)
+    const [leaderboardsLoading, setLeaderboardsLoading] = useState(false)
     const user = useUser()
     const setRoomData = useSetRoom()
+    const setLeaderboards = useSetLeaderboards()
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             setCreateRoomLoaidng(false)
+            setLeaderboardsLoading(false)
         });
 
         return unsubscribe
@@ -36,6 +40,16 @@ export default HomeScreen = ({ navigation }) => {
         socket.emit("generate-room", room => {
             setRoomData(room)
             navigation.navigate("WaitingScreen")
+        })
+    }
+
+    const getLeaderboards = () => {
+        if (leaderboardsLoading) return;
+        setLeaderboardsLoading(true)
+
+        socket.emit("get-leaderboards", leaderboards => {
+            setLeaderboards(leaderboards)
+            navigation.navigate("GeneralLeaderboardsScreen")
         })
     }
 
@@ -55,6 +69,7 @@ export default HomeScreen = ({ navigation }) => {
                 <View style={HomeScreenStyles.actionSection}>
                     <Button title={"أنشاء غرفة جديدة"} onPress={createRomm} loading={createRoomLoading} />
                     <Button title={"الدخول إلى غرفة "} onPress={() => navigation.navigate("JoinScreen")} />
+                    <Button title={"المتصدرين"} onPress={getLeaderboards} loading={leaderboardsLoading} />
                 </View>
             </View>
         </View>

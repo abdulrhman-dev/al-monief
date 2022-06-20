@@ -149,3 +149,9 @@ export function pointUsers(userSubmissions, correct) {
 export function getUniqueListBy(arr, key) {
     return [...new Map(arr.map(item => [item[key], item])).values()]
 }
+
+
+export function getFirstPlaceNumber(places) {
+    const firstsArray = places.filter(place => place === 1)
+    return firstsArray.length
+}

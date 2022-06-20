@@ -20,13 +20,16 @@ import RoomProvider from './RoomProvider';
 import UserProvider from './UserProvider';
 import GameProvider from './GameProvider';
 import ConnectionProvider from './ConnectionProvider';
+import LeaderboardsProvider from './LeaderboardsProvider';
+
 
 
 const providers = [
     RoomProvider,
     UserProvider,
     GameProvider,
-    ConnectionProvider
+    ConnectionProvider,
+    LeaderboardsProvider
 ]
 
 export default AppContextProvider = combineComponents(...providers)

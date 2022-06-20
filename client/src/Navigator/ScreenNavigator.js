@@ -12,7 +12,7 @@ import MainGameScreen from "../Screens/MainGameProcess/MainGameScreen";
 import CheckingScreen from "../Screens/CheckingScreen";
 import LeaderboardScreen from "../Screens/LeaderboardScreen";
 import TransferringScreen from "../Screens/TransferringScreen";
-
+import GeneralLeaderboardsScreen from "../Screens/GeneralLeaderboardsScreen"
 // Overlays
 import LoadingOverlay from "../Overlays/LoadingOverlay";
 import NoInternetOverlay from "../Overlays/NoInternetOverlay";
@@ -65,6 +65,8 @@ const UserFound = () => {
                 <Stack.Screen name="JoinScreen" component={JoinScreen} />
                 <Stack.Screen name="TransferringScreen" component={TransferringScreen} />
                 <Stack.Screen name="QrScannerScreen" component={QrScannerScreen} />
+                <Stack.Screen name="GeneralLeaderboardsScreen" component={GeneralLeaderboardsScreen} />
+
             </Stack.Group>
             <Stack.Group>
                 <Stack.Screen name="MainGameScreen" component={MainGameScreen} />

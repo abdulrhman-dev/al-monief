@@ -170,7 +170,7 @@ export default WaitingScreen = ({ navigation }) => {
 
                     <View style={WaitingScreenStyles.button}>
                         <Button
-                            type={room.users.length >= 2 ? "primary" : "disabled"}
+                            // type={room.users.length >= 2 ? "primary" : "disabled"}
                             title={"أبدا اللعبة"}
                             loading={startRoomLoading}
                             onPress={handleStartGame}

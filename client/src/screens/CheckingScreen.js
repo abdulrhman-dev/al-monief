@@ -39,7 +39,7 @@ export default CheckingScreen = ({ navigation }) => {
         if (lengthOfObjectArrays(words) !== 0) {
             setTimeout(() => {
                 setLoadingItems(false)
-            }, 1350)
+            }, 1450)
         }
     }, [words])
 
@@ -99,8 +99,6 @@ export default CheckingScreen = ({ navigation }) => {
     }
 
     const reset = (word, type) => {
-        console.log("RESET")
-
         if (!results.current[type]) return;
 
 
@@ -114,7 +112,6 @@ export default CheckingScreen = ({ navigation }) => {
     }
 
     const handleDuplicate = (word, type) => {
-        console.log("DUPLICATE")
         let value = [];
         if (results.current[type]) value = results.current[type]
 
@@ -169,7 +166,7 @@ export default CheckingScreen = ({ navigation }) => {
                 &&
 
                 <View style={styles.placeholderView}>
-                    <LoadingOverlay backgroundColor="white" color="grey" />
+                    <LoadingOverlay backgroundColor="#f2f2f2" color="grey" />
                 </View>
             }
 
@@ -212,14 +209,20 @@ export default CheckingScreen = ({ navigation }) => {
             }
 
 
-            <View style={styles.buttonContainer}>
-                <Button
-                    title={"تسليم النتيجة"}
-                    type={isDisabled ? "disabled" : "primary"}
-                    loading={submitLoading}
-                    onPress={handleSubmitResults}
-                />
-            </View>
+            {
+                Object.keys(words).length !== 0
+
+                &&
+
+                <View style={styles.buttonContainer}>
+                    <Button
+                        title={"تسليم النتيجة"}
+                        type={isDisabled ? "disabled" : "primary"}
+                        loading={submitLoading}
+                        onPress={handleSubmitResults}
+                    />
+                </View>
+            }
         </View >
     )
 }
@@ -240,7 +243,6 @@ const styles = StyleSheet.create({
         color: "#8A8A8A",
         textAlign: "center"
     },
-
     sectionText: {
         fontFamily: "NotoKufiArabic-Bold",
         backgroundColor: "lightgrey",
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
         height: "15%"
     },
     placeholderView: {
-        height: "70.9%",
+        height: "90%",
         width: "100%"
     }
 })

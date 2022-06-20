@@ -1,4 +1,7 @@
 import { nanoid } from "nanoid"
+import Database from "@molo_7/db.json"
+
+const db = new Database("./db/leaderboards.json");
 
 export function generateAndMatch(rooms) {
     const id = nanoid(6)
@@ -34,7 +37,38 @@ export function pointUsers(userSubmissions, correct) {
         results.push({ user, points })
     })
 
-    return results.sort((a, b) => b.points - a.points)
+    results = results.sort((a, b) => b.points - a.points)
+    storeLeaderboards(results)
+
+    return results
 }
 
 
+export function storeLeaderboards(array) {
+    array.forEach((data, index) => {
+        let user = db.get(data.user.generalId)
+
+        if (user === null) {
+            return db.set(data.user.generalId, {
+                ...data.user,
+                points: data.points,
+                gamePlaces: [index + 1],
+                numberOfGames: 1
+            })
+        }
+
+        db.set(data.user.generalId, {
+            ...data.user,
+            gamePlaces: [...user.gamePlaces, index + 1],
+            numberOfGames: user.numberOfGames + 1,
+            points: user.points + data.points
+        })
+
+    })
+};
+
+export function getLeaderboardsSorted() {
+    let users = db.fetchAll()
+    let usersArray = Object.keys(users).map(key => users[key])
+    return usersArray.sort((a, b) => b.points - a.points);
+}
