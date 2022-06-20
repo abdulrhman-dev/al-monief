@@ -8,7 +8,7 @@ import { moderateScale, scale } from "react-native-size-matters"
 
 
 
-export default function DicebearAvatar({ storeXML, seed }) {
+export default function DicebearAvatar({ storeSeed, seed }) {
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     const xml = createAvatar(style, {
@@ -41,7 +41,8 @@ export default function DicebearAvatar({ storeXML, seed }) {
 
 
     useEffect(() => {
-        storeXML(xml)
+        console.log(seed)
+        storeSeed(seed)
     }, [seed])
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
     View,
     Text,
@@ -15,13 +15,21 @@ import { MaterialIcons } from '@expo/vector-icons';
 import "react-native-get-random-values"
 import { v4 as uuidv4 } from "uuid";
 
+let UNIQUE_NUMBER = String(Math.floor((Math.random() * 8000000)))
 export default CreateUserScreen = () => {
     const [userLoading, setUserLoading] = useState(false)
     const [username, changeUsername] = useState("")
     const [avatar, storeAvatar] = useState()
-    const [uniqueNumber, setUniqueNumber] = useState(String(Math.floor((Math.random() * 8000000))))
+    const [uniqueNumber, setUniqueNumber] = useState(UNIQUE_NUMBER)
 
     const storeUser = useStoreUser()
+
+    useEffect(() => {
+        changeUsername("")
+        storeAvatar()
+        UNIQUE_NUMBER = String(Math.floor((Math.random() * 8000000)))
+        setUserLoading(false)
+    }, [])
 
 
     function handleSubmit() {
@@ -29,10 +37,9 @@ export default CreateUserScreen = () => {
         if (userLoading) return;
 
         setUserLoading(true)
-
         storeUser({
             name: username,
-            avatarXML: avatar,
+            avatarSeed: avatar,
             generalId: uuidv4(),
             numberOfGames: 0,
             gamePlaces: []
@@ -52,7 +59,7 @@ export default CreateUserScreen = () => {
                 <View style={CreateUserStyle.avatarView}>
                     <DicebearAvatar
                         seed={uniqueNumber + username}
-                        storeXML={xml => storeAvatar(xml)}
+                        storeSeed={seed => storeAvatar(seed)}
                     />
                 </View>
                 <View style={CreateUserStyle.secionView}>

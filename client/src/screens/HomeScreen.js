@@ -63,7 +63,7 @@ export default HomeScreen = ({ navigation }) => {
             </View>
             <View style={HomeScreenStyles.body}>
                 <View style={HomeScreenStyles.profile}>
-                    <Avatar xml={user.avatarXML} width={moderateScale(135, -1.5)} height={moderateScale(135, -1.5)} />
+                    <Avatar seed={user.avatarSeed} width={moderateScale(135, -1.5)} height={moderateScale(135, -1.5)} />
                     <Text style={HomeScreenStyles.username}>{user.name}</Text>
                 </View>
                 <View style={HomeScreenStyles.actionSection}>

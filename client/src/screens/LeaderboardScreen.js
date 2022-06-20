@@ -126,7 +126,7 @@ export default LeaderboardScreen = ({ navigation }) => {
                     <View key={index} style={styles.card}>
                         <View style={{ borderColor: "#e06394", borderRadius: 50, borderWidth: card.user.id === user.id ? 3 : 0 }}>
                             <Avatar
-                                xml={card.user.avatarXML}
+                                seed={card.user.avatarSeed}
                                 width="60"
                                 height="60"
                             />

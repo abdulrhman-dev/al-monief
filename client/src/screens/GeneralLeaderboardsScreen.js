@@ -49,7 +49,7 @@ export default GeneratlLeaderboardsSCreen = () => {
                         <View style={styles.cardBody}>
                             <View style={{ borderColor: "#e06394", borderRadius: 50, borderWidth: cardUser.generalId === user.generalId ? 3 : 0 }}>
                                 <Avatar
-                                    xml={cardUser.avatarXML}
+                                    seed={cardUser.avatarSeed}
                                     width="60"
                                     height="60"
                                 />

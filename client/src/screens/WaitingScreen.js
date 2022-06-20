@@ -198,7 +198,7 @@ function AvailableUser({ user, leader, border }) {
                 </View>
             }
 
-            <Avatar xml={user.avatarXML} width={moderateScale(70, -0.9)} height={moderateScale(70, -0.9)} />
+            <Avatar seed={user.avatarSeed} width={moderateScale(70, -0.9)} height={moderateScale(70, -0.9)} />
             <View style={AvatarBarStyles.textContainer}>
                 <Text
                     numberOfLines={1}
