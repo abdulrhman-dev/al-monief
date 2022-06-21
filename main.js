@@ -4,7 +4,7 @@ import express from "express"
 import { createServer } from "http"
 import { Server } from "socket.io";
 import { generateAndMatch, pointUsers, getLeaderboardsSorted } from "./lib.js"
-
+import connectDB from "./config/db.js"
 
 const app = express()
 
@@ -19,6 +19,9 @@ const io = new Server(httpServer, {
 
 let rooms = []
 const USER_LIMIT = 4
+
+
+connectDB(process.env.MONGO_URI)
 
 app.get("/", (req, res) => {
     console.log("TEST")
@@ -173,9 +176,9 @@ io.on("connection", socket => {
         callback()
     })
 
-    socket.on("submit-results", ({ userWords, results: checkingResults, roomId }, callback) => {
+    socket.on("submit-results", async ({ userWords, results: checkingResults, roomId }, callback) => {
         try {
-            let results = pointUsers(userWords, checkingResults)
+            let results = await pointUsers(userWords, checkingResults)
 
             callback(results, null)
 
@@ -193,8 +196,10 @@ io.on("connection", socket => {
         if (callback) callback()
     })
 
-    socket.on("get-leaderboards", (callback) => {
-        callback(getLeaderboardsSorted())
+    socket.on("get-leaderboards", async (callback) => {
+        const leaderboards = await getLeaderboardsSorted()
+
+        callback(leaderboards)
     })
 })
 

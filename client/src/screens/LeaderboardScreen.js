@@ -159,7 +159,7 @@ export default LeaderboardScreen = ({ navigation }) => {
                     &&
 
                     <Button
-                        title={"اخرج من الخرفة"}
+                        title={"اخرج من الغرفة"}
                         onPress={handleLeaveRoom}
                         type={"warning"}
                         loading={leaveRoomLoading}

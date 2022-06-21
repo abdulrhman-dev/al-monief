@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid"
 import Database from "@molo_7/db.json"
+import LeaderboardUser from "./models/LeaderboardUser.js";
 
 const db = new Database("./db/leaderboards.json");
 
@@ -12,7 +13,7 @@ export function generateAndMatch(rooms) {
     return id
 }
 
-export function pointUsers(userSubmissions, correct) {
+export async function pointUsers(userSubmissions, correct) {
     let results = []
 
     userSubmissions.forEach((userSubmission, index) => {
@@ -38,37 +39,45 @@ export function pointUsers(userSubmissions, correct) {
     })
 
     results = results.sort((a, b) => b.points - a.points)
-    storeLeaderboards(results)
+    await storeLeaderboards(results)
 
     return results
 }
 
 
-export function storeLeaderboards(array) {
-    array.forEach((data, index) => {
-        let user = db.get(data.user.generalId)
+export async function storeLeaderboards(array) {
+    try {
+        array.forEach(async (data, index) => {
+            let user = await LeaderboardUser.findOne({ generalId: data.user.generalId })
+            if (!user) {
+                console.log({
+                    ...data.user,
+                    points: data.points,
+                    gamePlaces: [index + 1],
+                    numberOfGames: 1
+                })
+                return LeaderboardUser.create({
+                    ...data.user,
+                    points: data.points,
+                    gamePlaces: [index + 1],
+                    numberOfGames: 1
+                })
+            }
 
-        if (user === null) {
-            return db.set(data.user.generalId, {
-                ...data.user,
-                points: data.points,
-                gamePlaces: [index + 1],
-                numberOfGames: 1
-            })
-        }
+            user.gamePlaces = [...user.gamePlaces, index + 1],
+                user.numberOfGames = user.numberOfGames + 1,
+                user.points = user.points + data.points
 
-        db.set(data.user.generalId, {
-            ...data.user,
-            gamePlaces: [...user.gamePlaces, index + 1],
-            numberOfGames: user.numberOfGames + 1,
-            points: user.points + data.points
+            await user.save()
         })
+    } catch (error) {
+        console.log(error.message)
+    }
 
-    })
 };
 
-export function getLeaderboardsSorted() {
-    let users = db.fetchAll()
+export async function getLeaderboardsSorted() {
+    let users = await LeaderboardUser.find({})
     let usersArray = Object.keys(users).map(key => users[key])
     return usersArray.sort((a, b) => b.points - a.points);
 }
