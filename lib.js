@@ -1,8 +1,6 @@
 import { nanoid } from "nanoid"
-import Database from "@molo_7/db.json"
 import LeaderboardUser from "./models/LeaderboardUser.js";
 
-const db = new Database("./db/leaderboards.json");
 
 export function generateAndMatch(rooms) {
     const id = nanoid(6)
