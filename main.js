@@ -121,7 +121,7 @@ io.on("connection", socket => {
         const sockets = await socket.in(id).fetchSockets()
         const users = sockets.map(socket => socket.user)
 
-        if (match.started) return callback({ msg: "Game has already started" }, null)
+        if (rooms[match].started) return callback({ msg: "Game has already started" }, null)
 
         if (users.length >= USER_LIMIT) return callback({ msg: "Room is full" }, null)
 
